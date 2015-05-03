@@ -79,7 +79,7 @@ public class UtilsNioClient {
 				return;
 			} else {
 				try {
-					Thread.sleep(1);
+					Thread.sleep(1000);
 				} catch (Exception e) {
 					e.printStackTrace();
 				}

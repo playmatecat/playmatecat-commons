@@ -21,7 +21,7 @@ public class Test {
 		
 		UtilsNioClient.init();
 		
-		for(int i = 0; i < 10; i++) {
+		for(int i = 0; i < 2; i++) {
 			RunThread rt = new RunThread();
 			rt.start();
 		}
