@@ -3,41 +3,38 @@ package com.playmatecat.utils.dataformat;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.Charset;
 
 import org.apache.log4j.Logger;
+import org.springframework.util.StreamUtils;
 
-public class UtilsInputStream2Str {
+public class UtilsStream {
     
-    private final static Logger looger = Logger.getLogger(UtilsInputStream2Str.class);
+    private final static Logger looger = Logger.getLogger(UtilsStream.class);
     
-    private UtilsInputStream2Str() {}
+    private UtilsStream() {}
 
     public static String inputStream2String(InputStream in) throws IOException {
-        StringBuffer out = new StringBuffer();
+    	
+    	String rtn = null;
         try {
-            byte[] b = new byte[4096];
-            for (int n; (n = in.read(b)) != -1;) {
-                out.append(new String(b, 0, n));
-            }
+        	rtn = StreamUtils.copyToString(in, Charset.forName("UTF-8"));
         } catch (Exception e) {
             looger.error("输入流转字符串错误", e);
         }
         
-        return out.toString();
+        return rtn;
     }
     
     public static String inputStream2String(InputStream in, String charset) throws IOException {
-        StringBuffer out = new StringBuffer();
+    	String rtn = null;
         try {
-            byte[] b = new byte[4096];
-            for (int n; (n = in.read(b)) != -1;) {
-                out.append(new String(b, 0, n, charset));
-            }
+        	rtn = StreamUtils.copyToString(in, Charset.forName(charset));
         } catch (Exception e) {
             looger.error("输入流转字符串错误", e);
         }
         
-        return out.toString();
+        return rtn;
     }
 
     public static InputStream Str2InputStream(String str) {

@@ -8,7 +8,7 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 
-import com.playmatecat.utils.dataformat.UtilsInputStream2Str;
+import com.playmatecat.utils.dataformat.UtilsStream;
 
 
 public class UtilsHttpClient {
@@ -50,7 +50,7 @@ public class UtilsHttpClient {
         HttpClientThreadPool.getInstance().start(thread);
         
         String result = ft.get();
-        return UtilsInputStream2Str.Str2InputStream(result);
+        return UtilsStream.Str2InputStream(result);
     }
 }
 

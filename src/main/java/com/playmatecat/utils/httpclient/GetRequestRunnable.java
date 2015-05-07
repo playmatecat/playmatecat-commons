@@ -10,7 +10,7 @@ import org.apache.http.client.protocol.HttpClientContext;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.protocol.HttpContext;
 
-import com.playmatecat.utils.dataformat.UtilsInputStream2Str;
+import com.playmatecat.utils.dataformat.UtilsStream;
 
 class GetRequestRunnable implements Callable<String> {
 
@@ -36,7 +36,7 @@ class GetRequestRunnable implements Callable<String> {
             
             try {
                 HttpEntity entity = response.getEntity();
-                return UtilsInputStream2Str.inputStream2String(entity.getContent());
+                return UtilsStream.inputStream2String(entity.getContent());
             } catch (Exception e) {
                 e.printStackTrace();
             } finally {
