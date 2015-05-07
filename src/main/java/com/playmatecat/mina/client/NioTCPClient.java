@@ -66,8 +66,10 @@ public class NioTCPClient {
 	    connector.addListener(nioClientSessionListener);
 	    
 	    //@STEP4 尝试建立连接,连接成功则跳出循环
+	    int tryCount = 0;
 	    while(true) {
 	    	try {
+	    		tryCount++;
 		    	future = connector.connect(new InetSocketAddress(ADDRESS, PORT));
 		    	// 等待连接创建成功  
 		    	future.awaitUninterruptibly();
@@ -75,6 +77,9 @@ public class NioTCPClient {
 		    	break;
 			} catch (Exception e) {
 				logger.error("nio server连接失败!", e);
+				if(tryCount > 5) {
+					break;
+				}
 			}
 	    }
 	    

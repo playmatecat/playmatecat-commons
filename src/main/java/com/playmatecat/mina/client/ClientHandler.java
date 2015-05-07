@@ -31,8 +31,6 @@ public class ClientHandler extends IoHandlerAdapter {
 			throws Exception {
 		
 		NioTransferAdapter nta = (NioTransferAdapter) message;
-		logger.info(MessageFormat.format("[Nio Server]>>Response json data:{0}", nta.getJSONdata() ));
-		logger.info("=============================================================================");
 		UtilsNioClient.resultMap.put(nta.getGUID(), nta);
 	}
 
