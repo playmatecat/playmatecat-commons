@@ -5,35 +5,46 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.locks.ReentrantLock;
 
+/**
+ * http 线程池
+ * @author blackcat
+ *
+ */
 class HttpClientThreadPool {
     
     /** 单例对象 **/
     private static HttpClientThreadPool threadPool;
     
     /** cpu数量 **/
-    private final static int numberOfCores = Runtime.getRuntime().availableProcessors();
+    private static final int CORE_NUM = Runtime.getRuntime().availableProcessors();
 
     /** 阻塞系数 **/
-    private final static double blockingCoefficient = 0.9;
+    private static final double BLOCKING_COEFFICIENT = 0.9;
     
     /**
      * 线程池最大数量
      * 线程数=CPU可用核心数/（1 - 阻塞系数），其中阻塞系数在在0到1范围内。
      * 计算密集型程序的阻塞系数为0，IO密集型程序的阻塞系数接近1。
      */
-    private final static int poolMaxSize = (int) (numberOfCores / (1 - blockingCoefficient));
+    private static final int POOL_MAX_SIZE = (int) (CORE_NUM / (1 - BLOCKING_COEFFICIENT));
     
     /** 当前执行线程数量  **/
-    private static int runningThradCount = 0;
+    private static int runningThradCount;
     
     /** 线程是否已满的标志位 **/
-    private static volatile boolean isFull = false;
+    private static volatile boolean isFull;
     
     /** 执行的线程列队 **/
     private static List<Thread> threadList = new LinkedList<Thread>();
     
     /** 锁,用于共享变量 当前执行线程数量 runningThradCount的操作 **/
-    private final static ReentrantLock lock = new ReentrantLock();
+    private static final ReentrantLock LOCK;
+    
+    static {
+        runningThradCount = 0;
+        isFull = false;
+        LOCK = new ReentrantLock();
+    }
     
     private HttpClientThreadPool(){}
     
@@ -68,14 +79,14 @@ class HttpClientThreadPool {
                         
                         tmpList.stream().filter(peekThread -> peekThread.isAlive())
                             .forEach(peekThread -> {
-                            threadList.remove(peekThread);
-                            lock.lock();
-                            runningThradCount--;
-                            lock.unlock();
-                            if(runningThradCount < poolMaxSize) {
-                                isFull = false;
-                            }
-                        });
+                                    threadList.remove(peekThread);
+                                    LOCK.lock();
+                                    runningThradCount--;
+                                    LOCK.unlock();
+                                    if(runningThradCount < POOL_MAX_SIZE) {
+                                        isFull = false;
+                                    }
+                                });
                         
                         Thread.sleep(1);
                     }//end of while
@@ -98,21 +109,21 @@ class HttpClientThreadPool {
         boolean isStarted = false;
         thread.setDaemon(true);
         while(!isStarted) {
-            if(runningThradCount <= poolMaxSize) {
-                lock.lock();
+            if(runningThradCount <= POOL_MAX_SIZE) {
+                LOCK.lock();
                 //volatile内存屏障
                 if(!isFull) {
                     //当有多个线程阻塞在上面的lock时,可能会running数量瞬间超过上限,造成跳过下面的if,此时应该循环判断是否已列队满调用
-                    if (runningThradCount <= poolMaxSize) {
+                    if (runningThradCount <= POOL_MAX_SIZE) {
                         runningThradCount++;
                         threadList.add(thread);
                         thread.start();
                         isStarted = true;
                     }
                 }
-                lock.unlock();
+                LOCK.unlock();
             } else {
-                lock.lock();
+                LOCK.lock();
                 //volatile内存屏障
                 if(!isFull) {  
                     isFull = true;
@@ -121,7 +132,7 @@ class HttpClientThreadPool {
                     thread.start();
                     isStarted = true;
                 }
-                lock.unlock();
+                LOCK.unlock();
             }
             
             //sleep for while true

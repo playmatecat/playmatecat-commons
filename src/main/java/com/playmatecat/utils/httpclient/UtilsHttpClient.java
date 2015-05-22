@@ -50,7 +50,7 @@ public class UtilsHttpClient {
         HttpClientThreadPool.getInstance().start(thread);
         
         String result = ft.get();
-        return UtilsStream.Str2InputStream(result);
+        return UtilsStream.str2InputStream(result);
     }
 }
 

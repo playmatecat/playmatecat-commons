@@ -9,45 +9,46 @@ import org.apache.mina.core.session.IoSession;
 import com.playmatecat.mina.NioTransferAdapter;
 import com.playmatecat.utils.mina.UtilsNioClient;
 
+/**
+ * client端消息处理
+ * @author blackcat
+ *
+ */
 public class ClientHandler extends IoHandlerAdapter {
-	
-	private static Logger logger = Logger.getLogger(ClientHandler.class);
 
+    private static Logger logger = Logger.getLogger(ClientHandler.class);
 
-	@Override	
-	public void sessionOpened(IoSession session) throws Exception {
-		logger.info("[Nio Client]session opened.");
-		super.sessionOpened(session);
-	}
+    @Override
+    public void sessionOpened(IoSession session) throws Exception {
+        logger.info("[Nio Client]session opened.");
+        super.sessionOpened(session);
+    }
 
-	@Override
-	public void exceptionCaught(IoSession session, Throwable cause)
-			throws Exception {
-		super.exceptionCaught(session, cause);
-	}
+    @Override
+    public void exceptionCaught(IoSession session, Throwable cause) throws Exception {
+        super.exceptionCaught(session, cause);
+    }
 
-	@Override
-	public void messageReceived(IoSession session, Object message)
-			throws Exception {
-		
-		NioTransferAdapter nta = (NioTransferAdapter) message;
-		UtilsNioClient.resultMap.put(nta.getGUID(), nta);
-	}
+    @Override
+    public void messageReceived(IoSession session, Object message) throws Exception {
 
-	@Override
-	public void messageSent(IoSession session, Object message) throws Exception {
-		NioTransferAdapter nta = (NioTransferAdapter) message;
-		logger.info(MessageFormat.format("[Nio Server]<<Request service name:{0}", nta.getRestServiceName() ));
-		logger.info(MessageFormat.format("[Nio Server]<<Request json data:{0}", nta.getJSONdata() ));
-		logger.info(MessageFormat.format("[Nio Server]<<Request dto class:{0}", nta.getClazz() ));
-		super.messageSent(session, message);
-	}
-	
-	@Override
-	public void sessionClosed(IoSession session) throws Exception {		
-		logger.info("[Nio Client]session closed.");
-		super.sessionClosed(session);
-	}
+        NioTransferAdapter nta = (NioTransferAdapter) message;
+        UtilsNioClient.RESULT_MAP.put(nta.getGUID(), nta);
+    }
 
+    @Override
+    public void messageSent(IoSession session, Object message) throws Exception {
+        NioTransferAdapter nta = (NioTransferAdapter) message;
+        logger.info(MessageFormat.format("[Nio Server]<<Request service name:{0}", nta.getRestServiceName()));
+        logger.info(MessageFormat.format("[Nio Server]<<Request json data:{0}", nta.getJsonData()));
+        logger.info(MessageFormat.format("[Nio Server]<<Request dto class:{0}", nta.getClazz()));
+        super.messageSent(session, message);
+    }
+
+    @Override
+    public void sessionClosed(IoSession session) throws Exception {
+        logger.info("[Nio Client]session closed.");
+        super.sessionClosed(session);
+    }
 
 }

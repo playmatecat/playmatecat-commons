@@ -1,70 +1,69 @@
 package com.playmatecat.mina;
 
-
 import java.io.Serializable;
 
 /**
  * client请求nio server的传递数据适配器
+ * 
  * @author blackcat
  *
  */
 public class NioTransferAdapter implements Serializable {
 
-	private static final long serialVersionUID = 1L;
-	
-	/**请求的唯一标码**/
-	private String GUID;
+    private static final long serialVersionUID = 1L;
 
-	/**请求的服务名**/
-	private String restServiceName;
-	
-	/**传递的数据**/
-	private String JSONdata;
-	
-	/**JSONdata所对应的数据类型**/
-	private Class<? extends Object> clazz;
-	
-	public String getGUID() {
-		return GUID;
-	}
+    /** 请求的唯一标码 **/
+    private String GUID;
 
-	public void setGUID(String gUID) {
-		GUID = gUID;
-	}
-	
-	public NioTransferAdapter(String JSONdata) {
-		this.JSONdata = JSONdata;
-	}
-	
-	public NioTransferAdapter(String restServiceName,String JSONdata,Class<? extends Object> clazz) {
-		this.restServiceName = restServiceName;
-		this.JSONdata = JSONdata;
-		this.clazz = clazz;
-	}
+    /** 请求的服务名 **/
+    private String restServiceName;
 
-	public String getRestServiceName() {
-		return restServiceName;
-	}
+    /** 传递的数据 **/
+    private String jsonData;
 
-	public void setRestServiceName(String restServiceName) {
-		this.restServiceName = restServiceName;
-	}
+    /** JSONdata所对应的数据类型 **/
+    private Class<? extends Object> clazz;
 
-	public String getJSONdata() {
-		return JSONdata;
-	}
+    public NioTransferAdapter(String jsonData) {
+        this.jsonData = jsonData;
+    }
 
-	public void setJSONdata(String jSONdata) {
-		JSONdata = jSONdata;
-	}
+    public NioTransferAdapter(String restServiceName, String jsonData, Class<? extends Object> clazz) {
+        this.restServiceName = restServiceName;
+        this.jsonData = jsonData;
+        this.clazz = clazz;
+    }
 
-	public Class<? extends Object> getClazz() {
-		return clazz;
-	}
+    public String getGUID() {
+        return GUID;
+    }
 
-	public void setClazz(Class<? extends Object> clazz) {
-		this.clazz = clazz;
-	}
+    public void setGUID(String gUID) {
+        GUID = gUID;
+    }
 
-	
+    public String getRestServiceName() {
+        return restServiceName;
+    }
+
+    public void setRestServiceName(String restServiceName) {
+        this.restServiceName = restServiceName;
+    }
+
+    public String getJsonData() {
+        return jsonData;
+    }
+
+    public void setJsonData(String jsonData) {
+        this.jsonData = jsonData;
+    }
+
+    public Class<? extends Object> getClazz() {
+        return clazz;
+    }
+
+    public void setClazz(Class<? extends Object> clazz) {
+        this.clazz = clazz;
+    }
+
 }

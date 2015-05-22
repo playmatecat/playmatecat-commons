@@ -10,69 +10,71 @@ import com.playmatecat.mina.NioTransferAdapter;
 import com.playmatecat.mina.client.NioTCPClient;
 import com.playmatecat.utils.label.UtilsGUID;
 
-
-
 /**
  * mina Nio客户端工具类
+ * 
  * @author blackcat
  *
  */
 public class UtilsNioClient {
-	private static Logger logger = Logger.getLogger(UtilsNioClient.class);
-	
-	public final static ConcurrentHashMap<String, NioTransferAdapter> resultMap = new ConcurrentHashMap<String, NioTransferAdapter>();
-	
-	private static ReentrantLock lock = new ReentrantLock();
-	
-	private UtilsNioClient(){}
-	
-	
-	private static IoSession session;
-	
-	public static void init() {
-		// 若未创建连接，则创建
-		if (NioTCPClient.getConnector() == null) {
-			try {
-				NioTCPClient.init();
-			} catch (Exception e) {
-				logger.error("创建nio连接失败！", e);
-			}
-		}
-		
-		session = NioTCPClient.getSession();
-	}
-	
-	/**
-	 * 
-	 */
-	public static void write(NioTransferAdapter nta) {
-		if(session == null) {
-			lock.lock();
-			if(session == null) {
-				init();
-			}
-			lock.unlock();
-		}
-		
-		String GUID = UtilsGUID.getGUID();
-		nta.setGUID(GUID);
-		session.write(nta);
 
-		//获得返回数据
-		while(true) {
-			NioTransferAdapter rtnNta = resultMap.get(GUID);
-			if(rtnNta != null) {
-				//释放空间
-				resultMap.remove(GUID);
-				return;
-			} else {
-				try {
-					Thread.sleep(10);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		}
-		
-	}
+    public static final ConcurrentHashMap<String, NioTransferAdapter> RESULT_MAP 
+        = new ConcurrentHashMap<String, NioTransferAdapter>();
+
+    private static Logger logger = Logger.getLogger(UtilsNioClient.class);
+
+    private static ReentrantLock lock = new ReentrantLock();
+
+    private static IoSession session;
+
+    private UtilsNioClient() {
+    }
+
+    public static void init() {
+        // 若未创建连接，则创建
+        if (NioTCPClient.getConnector() == null) {
+            try {
+                NioTCPClient.init();
+            } catch (Exception e) {
+                logger.error("创建nio连接失败！", e);
+            }
+        }
+
+        session = NioTCPClient.getSession();
+    }
+
+    /**
+     * NIO发送数据
+     * @param nta
+     */
+    public static void write(NioTransferAdapter nta) {
+        if (session == null) {
+            lock.lock();
+            if (session == null) {
+                init();
+            }
+            lock.unlock();
+        }
+
+        String guid = UtilsGUID.getGUID();
+        nta.setGUID(guid);
+        session.write(nta);
+
+        // 获得返回数据
+        while (true) {
+            NioTransferAdapter rtnNta = RESULT_MAP.get(guid);
+            if (rtnNta != null) {
+                // 释放空间
+                RESULT_MAP.remove(guid);
+                return;
+            } else {
+                try {
+                    Thread.sleep(10);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
+    }
 }

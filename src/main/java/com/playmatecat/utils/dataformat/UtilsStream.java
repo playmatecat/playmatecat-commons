@@ -8,48 +8,78 @@ import java.nio.charset.Charset;
 import org.apache.log4j.Logger;
 import org.springframework.util.StreamUtils;
 
+/**
+ * 流工具
+ * @author root
+ *
+ */
 public class UtilsStream {
-    
-    private final static Logger looger = Logger.getLogger(UtilsStream.class);
-    
-    private UtilsStream() {}
 
+    private static final Logger LOGGER = Logger.getLogger(UtilsStream.class);
+
+    private UtilsStream() {
+    }
+
+    /**
+     * 输入流转字符串
+     * @param in
+     * @return
+     * @throws IOException
+     */
     public static String inputStream2String(InputStream in) throws IOException {
-    	
-    	String rtn = null;
+
+        String rtn = null;
         try {
-        	rtn = StreamUtils.copyToString(in, Charset.forName("UTF-8"));
+            rtn = StreamUtils.copyToString(in, Charset.forName("UTF-8"));
         } catch (Exception e) {
-            looger.error("输入流转字符串错误", e);
+            LOGGER.error("输入流转字符串错误", e);
         }
-        
+
         return rtn;
     }
     
+    /**
+     * 输入流转字符串
+     * @param in
+     * @param charset
+     * @return
+     * @throws IOException
+     */
     public static String inputStream2String(InputStream in, String charset) throws IOException {
-    	String rtn = null;
+        String rtn = null;
         try {
-        	rtn = StreamUtils.copyToString(in, Charset.forName(charset));
+            rtn = StreamUtils.copyToString(in, Charset.forName(charset));
         } catch (Exception e) {
-            looger.error("输入流转字符串错误", e);
+            LOGGER.error("输入流转字符串错误", e);
         }
-        
+
         return rtn;
     }
-
-    public static InputStream Str2InputStream(String str) {
+    
+    /**
+     * 字符串转输入流
+     * @param str
+     * @return
+     */
+    public static InputStream str2InputStream(String str) {
         InputStream inNocodeInuptStream = new ByteArrayInputStream(str.getBytes());
         return inNocodeInuptStream;
     }
-    
-    public static InputStream Str2InputStream(String str, String charset) {
+
+    /**
+     * 字符串转输入流
+     * @param str
+     * @param charset
+     * @return
+     */
+    public static InputStream str2InputStream(String str, String charset) {
         InputStream inNocodeInuptStream = null;
         try {
             inNocodeInuptStream = new ByteArrayInputStream(str.getBytes(charset));
         } catch (Exception e) {
-            looger.error("字符串转输入流错误", e);
+            LOGGER.error("字符串转输入流错误", e);
         }
-        
+
         return inNocodeInuptStream;
     }
 }

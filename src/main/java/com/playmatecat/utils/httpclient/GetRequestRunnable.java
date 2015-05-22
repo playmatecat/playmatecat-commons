@@ -12,6 +12,11 @@ import org.apache.http.protocol.HttpContext;
 
 import com.playmatecat.utils.dataformat.UtilsStream;
 
+/**
+ * http get方法执行体
+ * @author blackcat
+ *
+ */
 class GetRequestRunnable implements Callable<String> {
 
     private final CloseableHttpClient httpClient;
