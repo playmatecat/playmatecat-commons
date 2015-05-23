@@ -1,4 +1,4 @@
-package com.playmatecat.cas.core.rememberMe;
+package com.playmatecat.shiro.rememberMe;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;

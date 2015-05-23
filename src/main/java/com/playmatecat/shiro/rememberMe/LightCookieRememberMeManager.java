@@ -1,4 +1,4 @@
-package com.playmatecat.cas.core.rememberMe;
+package com.playmatecat.shiro.rememberMe;
 
 import org.apache.shiro.web.mgt.CookieRememberMeManager;
 
