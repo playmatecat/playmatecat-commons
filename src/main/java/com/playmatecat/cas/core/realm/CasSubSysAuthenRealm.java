@@ -36,6 +36,7 @@ public class CasSubSysAuthenRealm extends AuthorizingRealm {
 		Object primaryPrincipal = principals.getPrimaryPrincipal();
 		if(primaryPrincipal != null) {
 			String currentPrincipal = principals.getPrimaryPrincipal().toString();
+			//判断存入的是否是用户数字id
 			if(NumberUtils.isDigits(currentPrincipal)){
 				Long userId = Long.valueOf(currentPrincipal);
 				
