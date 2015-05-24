@@ -18,7 +18,7 @@ import com.playmatecat.utils.spring.UtilsSpringContext;
  * @author blackcat
  *
  */
-public class CasChildSysAuthenRealm extends AuthorizingRealm {
+public class CasSubSysAuthenRealm extends AuthorizingRealm {
 	
 	/**
 	 * 子系统鉴权服务
