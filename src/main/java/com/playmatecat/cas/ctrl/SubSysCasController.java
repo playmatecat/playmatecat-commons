@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
  */
 @Controller
 @RequestMapping("/sub-sys")
-public class SubSysLoginController {
+public class SubSysCasController {
 	
 	@RequestMapping("/cas-login")
 	public String casLogin(HttpServletRequest request, HttpServletResponse response) {

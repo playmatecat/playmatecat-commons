@@ -33,7 +33,13 @@ public class UtilsSpringContext implements ApplicationContextAware {
 	}
 
 	public static <T> T getBean(Class<T> clazz){
-		return (T)applicationContext.getBean(clazz);		
+		T instance = null;
+		try {
+			instance = (T) applicationContext.getBean(clazz);
+        } catch (Exception e) {
+	        // TODO: handle exception
+        }
+		return instance;		
 	}
 
 	@Override
