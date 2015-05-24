@@ -26,16 +26,16 @@
 
 	<!-- mybatis sqlsession管理器 -->
 	<bean name="casSqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean" autowire="byName">
-	    <!-- cas鉴权数据源 -->
+	    <!-- cas在子系统进行鉴权数据源 -->
 		<property name="dataSource" ref="casDataSource" />
 		<property name="configLocation" value="classpath:/config/mybatis/sqlMap-config.xml" />
-		<property name="mapperLocations" value="classpath*:/sqlMap/cas/*.xml"></property>
+		<property name="mapperLocations" value="classpath*:/casSqlMap/cas/*.xml"></property>
 	</bean>
 	
 	<!-- mybatis接口编程自动扫描 -->
 	<bean id="casMapperScannerConfigurer" class="org.mybatis.spring.mapper.MapperScannerConfigurer">
 	    <!-- 注意这部,通过传入的是一个文本name来反射sql factory解决了,properties在这个bean之后加载的问题！！ -->
-        <property name="sqlSessionFactoryBeanName" value="sqlSessionFactory"/>
+        <property name="sqlSessionFactoryBeanName" value="casSqlSessionFactory"/>
         <property name="basePackage" value="com.playmatecat.cas.mapper"></property>
     </bean>
 

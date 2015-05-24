@@ -9,6 +9,9 @@ import org.apache.shiro.authz.SimpleAuthorizationInfo;
 import org.apache.shiro.realm.AuthorizingRealm;
 import org.apache.shiro.subject.PrincipalCollection;
 
+import com.playmatecat.cas.service.SubSysCasService;
+import com.playmatecat.utils.spring.UtilsSpringContext;
+
 /**
  * 子系统鉴权授权类
  * 每个子系统进行自己的鉴权
@@ -16,6 +19,11 @@ import org.apache.shiro.subject.PrincipalCollection;
  *
  */
 public class CasChildSysAuthenRealm extends AuthorizingRealm {
+	
+	/**
+	 * 子系统鉴权服务
+	 */
+	private SubSysCasService subSysCasService;
 
 	/**
 	 * 鉴权、授权
@@ -32,11 +40,16 @@ public class CasChildSysAuthenRealm extends AuthorizingRealm {
 				Long userId = Long.valueOf(currentPrincipal);
 				
 				//从db获得该用户的角色、权限
+				if(subSysCasService == null) {
+					subSysCasService = (SubSysCasService) UtilsSpringContext.getBean("subSysCasService");
+				}
+				
+				subSysCasService.say();
 				
 				//把角色和权限信息写入用户信息
 				authorizationInfo = new SimpleAuthorizationInfo();
-				authorizationInfo.addStringPermission("?module:?permission");
-				authorizationInfo.addRole("?role:?childRole");
+//				authorizationInfo.addStringPermission("?module:?permission");
+//				authorizationInfo.addRole("?role:?childRole");
 			}
 		}
 		
