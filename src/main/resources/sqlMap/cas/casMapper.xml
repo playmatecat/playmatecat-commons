@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- 该namespace对应接口路径,否则抛出异常:"...is not known to the MapperRegister" 
+    每个select中id对应接口中的一个方法名
+ -->
+<mapper namespace="com.playmatecat.cas.mapper.CasMapper">
+    <!-- <resultMap type="com.playmatecat.modules.login.dto.UserDTO" id="resulat">
+        <result column="logined_at" property="loginedAt"/>
+        <result column="email" property="email"/>
+    </resultMap>
+    
+    添加一条user记录
+    <insert id="addUser" parameterType="Map">
+        INSERT INTO
+        commons.user
+        (
+        email,
+        password,
+        nick_name,
+        registered_at,
+        logined_at
+        )
+        VALUES
+        (
+        #{email,jdbcType=VARCHAR},
+        PASSWORD(#{password,jdbcType=VARCHAR}),
+        #{nickName,jdbcType=VARCHAR},
+        NOW(),
+        FROM_UNIXTIME(#{loginedAt})
+        
+        )
+    </insert>
+    
+    <select id="getUser" resultMap="resulat">
+        SELECT email,logined_at 
+        from commons.user
+        where id = 10002
+        
+    </select> -->
+</mapper>
