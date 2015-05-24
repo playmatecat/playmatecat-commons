@@ -24,7 +24,7 @@ public class SubSysCasController {
 	
 	@RequestMapping("/cas-login")
 	public String casLogin(HttpServletRequest request, HttpServletResponse response) {
-		SecurityUtils.getSubject().isPermitted("test:test");
+		
 
 		//获得跳转登录前访问的最后地址
 		String lastUrl;

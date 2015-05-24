@@ -28,7 +28,7 @@
 	<bean name="casSqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean" autowire="byName">
 	    <!-- cas在子系统进行鉴权数据源 -->
 		<property name="dataSource" ref="casDataSource" />
-		<property name="configLocation" value="classpath:/config/mybatis/sqlMap-config.xml" />
+		<property name="configLocation" value="classpath:/config/mybatis/cas/sqlMap-config.xml" />
 		<property name="mapperLocations" value="classpath*:/casSqlMap/cas/*.xml"></property>
 	</bean>
 	

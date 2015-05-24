@@ -10,11 +10,11 @@
 
 
 	<bean id="casDataSource" class="com.alibaba.druid.pool.DruidDataSource">
-		<property name="url" value="${${env}.datasource1.jdbcUrl}" />
-		<property name="username" value="${${env}.datasource1.user}" />
+		<property name="url" value="${${env}.casDatasource1.jdbcUrl}" />
+		<property name="username" value="${${env}.casDatasource1.user}" />
 		<!-- 加密java -cp druid-0.2.23.jar com.alibaba.druid.filter.config.ConfigTools 
 			you_password -->
-		<property name="password" value="${${env}.datasource1.password}" />		
+		<property name="password" value="${${env}.casDatasource1.password}" />		
 		<!-- 自动解密 -->
 		<property name="connectionProperties" value="config.decrypt=true" />
 		<!-- 初始化时建立物理连接的个数。初始化发生在显示调用init方法，或者第一次getConnection时 -->
