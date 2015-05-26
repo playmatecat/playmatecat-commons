@@ -41,7 +41,10 @@
     </select> -->
     
     <select id="getUserRoles" parameterType="java.lang.Long">
-    	SELECT * FROM 
+    	SELECT 
+    		role.id as id,
+    		role.code as code
+    	FROM 
     		commons.role
     	INNER JOIN
     		commons.rel_user_role
@@ -49,8 +52,44 @@
     		role.id = rel_user_role.role_id
     	AND
     		rel_user_role.user_id = #{userId,jdbcType=INTEGER}
+    	AND	
+    		role.is_deleted = 0
+    	AND
+    		rel_user_role.is_deleted = 0
     </select>
     
     <select id="getUserPermissions" parameterType="java.lang.Long">
+    	SELECT
+    		permission.id as id
+    		permission.code as code
+    	FROM
+    		commons.role
+    	INNER JOIN
+    		commons.rel_user_role
+    	ON
+    		role.id = rel_user_role.role_id
+    	AND
+    		rel_user_role.user_id = #{userId,jdbcType=INTEGER}
+    	AND	
+    		role.is_deleted = 0
+    	AND
+    		rel_user_role.is_deleted = 0
+    		
+    		
+    	INNER JOIN
+    		commons.rel_role_permission
+    	ON
+    		role.id = rel_role_permission.role_id
+    	AND
+    		rel_role_permission.is_deleted = 0 
+    		
+    		  	
+    	INNER JOIN
+    		commons.permission
+    	ON
+    		permission.id = rel_role_permission.permission_id
+    	AND
+    		permission.is_deleted = 0
+    		
     </select>
 </mapper>
