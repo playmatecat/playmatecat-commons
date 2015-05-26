@@ -1,5 +1,7 @@
 package com.playmatecat.cas.core.realm;
 
+import java.util.List;
+
 import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.AuthenticationInfo;
@@ -9,6 +11,8 @@ import org.apache.shiro.authz.SimpleAuthorizationInfo;
 import org.apache.shiro.realm.AuthorizingRealm;
 import org.apache.shiro.subject.PrincipalCollection;
 
+import com.playmatecat.cas.domains.dto.PermissionDto;
+import com.playmatecat.cas.domains.dto.RoleDto;
 import com.playmatecat.cas.service.SubSysCasService;
 import com.playmatecat.utils.spring.UtilsSpringContext;
 
@@ -45,12 +49,21 @@ public class CasSubSysAuthenRealm extends AuthorizingRealm {
 					subSysCasService = (SubSysCasService) UtilsSpringContext.getBean("subSysCasService");
 				}
 				
-				subSysCasService.say();
-				
 				//把角色和权限信息写入用户信息
 				authorizationInfo = new SimpleAuthorizationInfo();
-//				authorizationInfo.addStringPermission("?module:?permission");
-//				authorizationInfo.addRole("?role:?childRole");
+				
+				List<RoleDto> roleList = subSysCasService.getUserRoles(userId);
+				roleList.stream().forEach(peekRole -> {
+//	              authorizationInfo.addRole("?role:?childRole");	
+				});
+				
+				List<PermissionDto> permissionList = subSysCasService.getUserPermissions(userId);
+				permissionList.stream().forEach(peekPermission -> {
+//	              authorizationInfo.addStringPermission("?module:?permission");				    
+				});
+				
+				subSysCasService.say();
+
 			}
 		}
 		
