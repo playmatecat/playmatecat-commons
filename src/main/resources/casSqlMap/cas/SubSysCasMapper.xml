@@ -5,7 +5,7 @@
 <!-- 该namespace对应接口路径,否则抛出异常:"...is not known to the MapperRegister" 
     每个select中id对应接口中的一个方法名
  -->
-<mapper namespace="com.playmatecat.cas.mapper.CasMapper">
+<mapper namespace="com.playmatecat.cas.mapper.SubSysCasMapper">
     <!-- <resultMap type="com.playmatecat.modules.login.dto.UserDTO" id="resulat">
         <result column="logined_at" property="loginedAt"/>
         <result column="email" property="email"/>
@@ -39,4 +39,18 @@
         where id = 10002
         
     </select> -->
+    
+    <select id="getUserRoles" parameterType="java.lang.Long">
+    	SELECT * FROM 
+    		commons.role
+    	INNER JOIN
+    		commons.rel_user_role
+    	ON
+    		role.id = rel_user_role.role_id
+    	AND
+    		rel_user_role.user_id = #{userId,jdbcType=INTEGER}
+    </select>
+    
+    <select id="getUserPermissions" parameterType="java.lang.Long">
+    </select>
 </mapper>
