@@ -10,37 +10,9 @@
         <result column="logined_at" property="loginedAt"/>
         <result column="email" property="email"/>
     </resultMap>
+-->
     
-    添加一条user记录
-    <insert id="addUser" parameterType="Map">
-        INSERT INTO
-        commons.user
-        (
-        email,
-        password,
-        nick_name,
-        registered_at,
-        logined_at
-        )
-        VALUES
-        (
-        #{email,jdbcType=VARCHAR},
-        PASSWORD(#{password,jdbcType=VARCHAR}),
-        #{nickName,jdbcType=VARCHAR},
-        NOW(),
-        FROM_UNIXTIME(#{loginedAt})
-        
-        )
-    </insert>
-    
-    <select id="getUser" resultMap="resulat">
-        SELECT email,logined_at 
-        from commons.user
-        where id = 10002
-        
-    </select> -->
-    
-    <select id="getUserRoles" parameterType="java.lang.Long">
+    <select id="getUserRoles" parameterType="java.lang.Long" resultType="com.playmatecat.cas.domains.dto.RoleDto">
     	SELECT 
     		role.id as id,
     		role.code as code
@@ -58,9 +30,9 @@
     		rel_user_role.is_deleted = 0
     </select>
     
-    <select id="getUserPermissions" parameterType="java.lang.Long">
+    <select id="getUserPermissions" parameterType="java.lang.Long" resultType="com.playmatecat.cas.domains.dto.PermissionDto">
     	SELECT
-    		permission.id as id
+    		permission.id as id,
     		permission.code as code
     	FROM
     		commons.role
