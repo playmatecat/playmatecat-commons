@@ -53,14 +53,15 @@ public class CasSubSysAuthenRealm extends AuthorizingRealm {
 				authorizationInfo = new SimpleAuthorizationInfo();
 				
 				List<RoleDto> roleList = subSysCasService.getUserRoles(userId);
-				roleList.stream().forEach(peekRole -> {
-//	              authorizationInfo.addRole("?role:?childRole");	
-				});
+				for(RoleDto peekRole :roleList) {
+				    authorizationInfo.addRole(peekRole.getCode());
+				}
+				
 				
 				List<PermissionDto> permissionList = subSysCasService.getUserPermissions(userId);
-				permissionList.stream().forEach(peekPermission -> {
-//	              authorizationInfo.addStringPermission("?module:?permission");				    
-				});
+				for(PermissionDto peekPermission : permissionList) {
+				    authorizationInfo.addStringPermission(peekPermission.getCode());
+				}
 				
 				subSysCasService.say();
 
