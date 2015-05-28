@@ -20,14 +20,37 @@ public class NioTransferAdapter implements Serializable {
 
     /** 传递的数据 **/
     private String jsonData;
+    
+    /** 请求结果 **/
+    private String resultJsonData;
+    
+    /** nio request起始时间 **/
+    private long startTimeMillis;
 
     /** JSONdata所对应的数据类型 **/
     private Class<? extends Object> clazz;
 
-    public NioTransferAdapter(String jsonData) {
-        this.jsonData = jsonData;
+
+    /**
+     * 用于服务端回传结果
+     * @param resultJsonData 结果
+     * @param reqNta 客户端请求的NioTransferAdapter对象
+     */
+    public NioTransferAdapter(String resultJsonData,NioTransferAdapter reqNta) {
+        this.GUID = reqNta.getGUID();
+        this.restServiceName = reqNta.getRestServiceName();
+        this.jsonData = reqNta.getJsonData();
+        this.startTimeMillis = reqNta.getStartTimeMillis();
+        this.clazz = reqNta.clazz;
+        this.resultJsonData = resultJsonData;
     }
 
+    /**
+     * 用户客户端构建请求
+     * @param restServiceName
+     * @param jsonData
+     * @param clazz
+     */
     public NioTransferAdapter(String restServiceName, String jsonData, Class<? extends Object> clazz) {
         this.restServiceName = restServiceName;
         this.jsonData = jsonData;
@@ -65,5 +88,22 @@ public class NioTransferAdapter implements Serializable {
     public void setClazz(Class<? extends Object> clazz) {
         this.clazz = clazz;
     }
+
+    public long getStartTimeMillis() {
+        return startTimeMillis;
+    }
+
+    public void setStartTimeMillis(long startTimeMillis) {
+        this.startTimeMillis = startTimeMillis;
+    }
+
+    public String getResultJsonData() {
+        return resultJsonData;
+    }
+
+    public void setResultJsonData(String resultJsonData) {
+        this.resultJsonData = resultJsonData;
+    }
+
 
 }

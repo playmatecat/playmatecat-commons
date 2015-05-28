@@ -17,6 +17,9 @@ import com.playmatecat.utils.mina.UtilsNioClient;
 public class ClientHandler extends IoHandlerAdapter {
 
     private static Logger logger = Logger.getLogger(ClientHandler.class);
+    
+    /** 超时时间5分钟  **/
+    public final static long TIMEOUT_MILLIS = 300000;
 
     @Override
     public void sessionOpened(IoSession session) throws Exception {
@@ -33,15 +36,21 @@ public class ClientHandler extends IoHandlerAdapter {
     public void messageReceived(IoSession session, Object message) throws Exception {
 
         NioTransferAdapter nta = (NioTransferAdapter) message;
-        UtilsNioClient.RESULT_MAP.put(nta.getGUID(), nta);
+        // 检查是否超时,防止写入死亡数据(死亡数据永远不会从map里清除)
+        long usedTime = System.currentTimeMillis() - nta.getStartTimeMillis();
+        if(usedTime < TIMEOUT_MILLIS) {
+            logger.debug(MessageFormat.format("[Nio Server]<<service name:{0}", nta.getRestServiceName()));
+            logger.debug(MessageFormat.format("[Nio Server]<<json data:{0}", nta.getJsonData()));
+            logger.debug(MessageFormat.format("[Nio Server]<<dto class:{0}", nta.getClazz()));
+            logger.debug(MessageFormat.format("[Nio Server]>>result:{0}", nta.getResultJsonData()));
+            logger.debug(MessageFormat.format("[Nio Server]>>cost:{0} ms", usedTime));
+            UtilsNioClient.RESULT_MAP.put(nta.getGUID(), nta);
+        }
     }
 
     @Override
     public void messageSent(IoSession session, Object message) throws Exception {
         NioTransferAdapter nta = (NioTransferAdapter) message;
-        logger.info(MessageFormat.format("[Nio Server]<<Request service name:{0}", nta.getRestServiceName()));
-        logger.info(MessageFormat.format("[Nio Server]<<Request json data:{0}", nta.getJsonData()));
-        logger.info(MessageFormat.format("[Nio Server]<<Request dto class:{0}", nta.getClazz()));
         super.messageSent(session, message);
     }
 
