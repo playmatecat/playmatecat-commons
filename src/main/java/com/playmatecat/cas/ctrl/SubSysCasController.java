@@ -12,6 +12,7 @@ import org.springframework.core.io.support.PropertiesLoaderUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import com.playmatecat.utils.spring.UtilsProperties;
 import com.playmatecat.utils.spring.UtilsSpringContext;
 
 /**
@@ -22,8 +23,7 @@ import com.playmatecat.utils.spring.UtilsSpringContext;
 @Controller
 @RequestMapping("/sub-sys")
 public class SubSysCasController {
-	
-	private Properties casProps;
+
 	
 	@RequestMapping("/cas-login")
 	public String casLogin(HttpServletRequest request, HttpServletResponse response) {
@@ -39,30 +39,31 @@ public class SubSysCasController {
 		}
 
 		
-		//读取CAS配置文件
-		if(casProps == null) {
-			try {
-			    //读取是测试还是生产环境
-			    String env = request.getSession()
-			            .getServletContext().getInitParameter("spring.profiles.active");
-			    env = StringUtils.isBlank(env) ? StringUtils.EMPTY : env + "/";
-			    String path = "/config/props/" + env + "cas/cas.properties";
-				casProps = PropertiesLoaderUtils.loadAllProperties(path);
-	        } catch (Exception e) {
-	         // do nothing or output logger debug
-		        e.printStackTrace();
-	        }
-		}
+//		//读取CAS配置文件
+//		if(casProps == null) {
+//			try {
+//			    //读取是测试还是生产环境
+//			    String env = request.getSession()
+//			            .getServletContext().getInitParameter("spring.profiles.active");
+//			    env = StringUtils.isBlank(env) ? StringUtils.EMPTY : env + "/";
+//			    String path = "/config/props/" + env + "cas/cas.properties";
+//				casProps = PropertiesLoaderUtils.loadAllProperties(path);
+//	        } catch (Exception e) {
+//	         // do nothing or output logger debug
+//		        e.printStackTrace();
+//	        }
+//		}
+//		
+//		
+//		if(casProps.isEmpty()) {
+//			return null;
+//		}
 		
 		
-		if(casProps.isEmpty()) {
-			return null;
-		}
-		
-		String casServerUrl = casProps.getProperty("cas.server.url");
+		String casServerUrl = UtilsProperties.getProp("cas.server.url");
 		
 		//子系统的http(s)+域名
-		String subSysSiteUrl = casProps.getProperty("cas.subsys.url");
+		String subSysSiteUrl = UtilsProperties.getProp("cas.subsys.url");
 
 		//跳转到cas请求登录验证
 		String casUrl = "redirect:" + casServerUrl + "?url=" + subSysSiteUrl + lastUrl;
