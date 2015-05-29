@@ -5,11 +5,14 @@ import java.util.Properties;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.web.util.WebUtils;
 import org.springframework.core.io.support.PropertiesLoaderUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+
+import com.playmatecat.utils.spring.UtilsSpringContext;
 
 /**
  * 各子系统跳转cas服务器的通用控制类
@@ -35,10 +38,18 @@ public class SubSysCasController {
 			lastUrl = lastUrl == null ? "" : lastUrl;
 		}
 
+		
+		//读取CAS配置文件
 		if(casProps == null) {
 			try {
-				casProps = PropertiesLoaderUtils.loadAllProperties("/config/cas/cas.properties");
+			    //读取是测试还是生产环境
+			    String env = request.getSession()
+			            .getServletContext().getInitParameter("spring.profiles.active");
+			    env = StringUtils.isBlank(env) ? StringUtils.EMPTY : env + "/";
+			    String path = "/config/" + env + "cas/cas.properties";
+				casProps = PropertiesLoaderUtils.loadAllProperties(path);
 	        } catch (Exception e) {
+	         // do nothing or output logger debug
 		        e.printStackTrace();
 	        }
 		}
