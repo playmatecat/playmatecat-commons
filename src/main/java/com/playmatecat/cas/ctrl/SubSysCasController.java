@@ -46,7 +46,7 @@ public class SubSysCasController {
 			    String env = request.getSession()
 			            .getServletContext().getInitParameter("spring.profiles.active");
 			    env = StringUtils.isBlank(env) ? StringUtils.EMPTY : env + "/";
-			    String path = "/config/" + env + "cas/cas.properties";
+			    String path = "/config/props/" + env + "cas/cas.properties";
 				casProps = PropertiesLoaderUtils.loadAllProperties(path);
 	        } catch (Exception e) {
 	         // do nothing or output logger debug
