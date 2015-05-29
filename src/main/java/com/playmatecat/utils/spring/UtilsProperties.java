@@ -1,5 +1,6 @@
 package com.playmatecat.utils.spring;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import com.playmatecat.spring.properties.CatPropertyConfigurer;
@@ -11,7 +12,9 @@ import com.playmatecat.spring.properties.CatPropertyConfigurer;
  *
  */
 public class UtilsProperties {
-    private static Map<String, Object> ctxPropertiesMap;
+    
+    /** properties map 请不要用懒加载**/
+    private final static Map<String, Object> ctxPropertiesMap = new HashMap<String, Object>();
     
     private UtilsProperties(){}
     
