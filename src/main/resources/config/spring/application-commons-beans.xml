@@ -6,6 +6,6 @@
     http://www.springframework.org/schema/context 
     http://www.springframework.org/schema/context/spring-context-4.0.xsd">
 
-    <!-- spring上下文工具 -->
+    <!-- spring上下文工具 ,用于方便读取spring上下文中的bean对象以及@Service-->
     <bean class="com.playmatecat.utils.spring.UtilsSpringContext" id = "UtilsSpringContext" />
 </beans> 
