@@ -18,10 +18,15 @@
 		<commons-lang3.version>[3.4,4.0)</commons-lang3.version>
 		<log4j.version>[1.2.17,2.0)</log4j.version>
 		<httpclient.version>[4.4.1,4.9)</httpclient.version>
-		<servlet-api.version>[2.5,3.0)</servlet-api.version>
+		<servlet-api.version>2.5</servlet-api.version>
 		<jsp-api.version>[2.2,3.0)</jsp-api.version>
 		<shiro-redis.version>2.4.2.1-RELEASE</shiro-redis.version>
-		<jedis.version>[2.7.2,3.0)</jedis.version> -->
+		<jedis.version>[2.7.2,3.0)</jedis.version> 
+		<druid.version>[1.0.14,1.1)</druid.version>
+		<mybatis.vesrion>[3.3.0,3.9)</mybatis.vesrion>
+		<mybatis-spring.version>[1.2.2,1.9)</mybatis-spring.version>
+		<mysql-connector-java.version>[5.1.35,5.9)</mysql-connector-java.version>-->
+		
 		
 		
 		<shiro.version>1.2.3</shiro.version>
@@ -38,6 +43,10 @@
 		<jsp-api.version>2.2</jsp-api.version>
 		<shiro-redis.version>2.4.2.1-RELEASE</shiro-redis.version>
 		<jedis.version>2.7.2</jedis.version>
+		<druid.version>1.0.14</druid.version>
+		<mybatis.vesrion>3.3.0</mybatis.vesrion>
+		<mybatis-spring.version>1.2.2</mybatis-spring.version>
+		<mysql-connector-java.version>5.1.35</mysql-connector-java.version>
 		
 	</properties>
 
@@ -259,6 +268,33 @@
             <groupId>redis.clients</groupId>
             <artifactId>jedis</artifactId>
             <version>${jedis.version}</version>
+        </dependency>
+        
+        
+        <!-- alibaba连接池,子系统对用户授权鉴权需要用到他 -->
+        <dependency>
+            <groupId>com.alibaba</groupId>
+            <artifactId>druid</artifactId>
+            <version>${druid.version}</version>
+        </dependency>
+        
+        <!-- mybatis,子系统对用户授权鉴权需要用到他  -->
+        <dependency>
+            <groupId>org.mybatis</groupId>
+            <artifactId>mybatis</artifactId>
+            <version>${mybatis.vesrion}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.mybatis</groupId>
+            <artifactId>mybatis-spring</artifactId>
+            <version>${mybatis-spring.version}</version>
+        </dependency>
+
+        <!-- mysql connector,子系统对用户授权鉴权需要用到他  -->
+        <dependency>
+            <groupId>mysql</groupId>
+            <artifactId>mysql-connector-java</artifactId>
+            <version>${mysql-connector-java.version}</version>
         </dependency>
 
 	</dependencies>
