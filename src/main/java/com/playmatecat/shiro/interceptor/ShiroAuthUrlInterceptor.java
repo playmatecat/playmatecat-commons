@@ -17,7 +17,7 @@ public class ShiroAuthUrlInterceptor implements HandlerInterceptor {
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         // TODO Auto-generated method stub
         //关于获得所有controller映射的思路，
-        //参考dispatchr-mvc-servlet.xml文件,以及AbstractHandlerMethodMapping源码spring的第217行
+        //参考dispatchr-mvc-servlet.xml文件,以及AbstractHandlerMethodMapping源码spring的第217行registerHandlerMethod方法
         
         
         //先判断是否存在这个映射url,不存在则redirect到404,并且返回false,不再执行下一个拦截器
