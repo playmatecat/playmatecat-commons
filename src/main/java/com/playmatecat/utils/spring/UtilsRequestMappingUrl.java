@@ -50,11 +50,11 @@ public class UtilsRequestMappingUrl {
 	}
 	
 	/**
-	 * 判断这个request的url是否在controller的映射url中
+	 * 判断这个request的URI是否在controller的映射requestMapping中
 	 * @param request
 	 * @return
 	 */
-	public static boolean contains(HttpServletRequest request) {
+	public static boolean containsURI(HttpServletRequest request) {
 		String lookupPath = getLookupPath(request);
 //		return urlSet.contains(lookupPath);
 		
