@@ -6,6 +6,8 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.web.util.UrlPathHelper;
 
+import com.playmatecat.spring.mvc.CatRequestMappingHandlerMapping;
+
 
 
 /**
@@ -27,7 +29,18 @@ public class UtilsRequestMappingUrl {
 	/**spring提供的url去参简化成最简url工具,可以获得lookupPath不含参数的路径(不包含域名信息,例如/test/name)**/
 	private static UrlPathHelper urlPathHelper = new UrlPathHelper();
 	
+	@SuppressWarnings("rawtypes")
+    private static CatRequestMappingHandlerMapping catRequestMappingHandlerMapping;
+	
 	private UtilsRequestMappingUrl(){}
+	
+	/**
+	 * 此方法只有框commons架调，自己不要随便调用
+	 */
+	@SuppressWarnings("rawtypes")
+    public static void initMappingHandler(CatRequestMappingHandlerMapping mappingHandler) {
+	    catRequestMappingHandlerMapping = mappingHandler;
+	}
 	
 	/**
 	 * 此方法只有框commons架调，自己不要随便调用
@@ -43,7 +56,9 @@ public class UtilsRequestMappingUrl {
 	 */
 	public static boolean contains(HttpServletRequest request) {
 		String lookupPath = getLookupPath(request);
-		return urlSet.contains(lookupPath);
+//		return urlSet.contains(lookupPath);
+		
+		return catRequestMappingHandlerMapping.hasMatchedUrlRequestMapping(lookupPath, request);
 	}
 	
 	/**
