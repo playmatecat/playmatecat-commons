@@ -6,9 +6,17 @@ import javax.servlet.http.HttpServletResponse;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
 
-import com.playmatecat.utils.spring.UtilsSpringContext;
+import com.playmatecat.spring.exception.NotFoundURIException;
+import com.playmatecat.utils.spring.UtilsRequestMappingUrl;
+
 
 public class ShiroAuthUrlInterceptor implements HandlerInterceptor {
+    
+    /**403路径**/
+    private String redirectURI403;
+    
+    /**404路径**/
+    private String redirectURI404;
 
     /**
      * 预处理回调方法
@@ -21,9 +29,19 @@ public class ShiroAuthUrlInterceptor implements HandlerInterceptor {
         
         
         //先判断是否存在这个映射url,不存在则redirect到404,并且返回false,不再执行下一个拦截器
-        //若db检查权限无法获得这个url资源，也就是没权限，那么返回403,并且返回false,不再执行下一个拦截器
+        if(!UtilsRequestMappingUrl.containsURI(request)) {
+            response.sendError(response.SC_NOT_FOUND, "找不到这个页面");
+        }
+//        response.sendError(response.SC_NOT_FOUND, "找不到这个页面");
         
-        return false;
+//        RequestDispatcher rd = request.getRequestDispatcher("/common/error/404");
+//        rd.forward(request, response);
+        
+        
+        throw new NotFoundURIException();
+        //若db检查权限无法获得这个url资源，也就是没权限，那么返回403,并且返回false,不再执行下一个拦截器
+    
+        //return false;
     }
 
     /**
@@ -39,7 +57,7 @@ public class ShiroAuthUrlInterceptor implements HandlerInterceptor {
      */
     @Override
     public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) throws Exception {
-       //do nothing
+        //do nothing
     }
 
 }
