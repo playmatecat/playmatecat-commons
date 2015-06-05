@@ -3,21 +3,32 @@ package com.playmatecat.shiro.interceptor;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.springframework.expression.AccessException;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.playmatecat.cas.service.SubSysCasService;
+import com.playmatecat.spring.exception.NotFoundPermException;
 import com.playmatecat.spring.exception.NotFoundURIException;
 import com.playmatecat.utils.spring.UtilsRequestMappingUrl;
+import com.playmatecat.utils.spring.UtilsSpringContext;
 
-
+/**
+ * shiro对url进行动态鉴权，实现url权限判断功能
+ * 如果没有权限或者未找到页面，会抛出对应异常，然后又spring全局异常拦截器处理，跳转到对应的页面
+ * @author root
+ *
+ */
 public class ShiroAuthUrlInterceptor implements HandlerInterceptor {
     
-    /**403路径**/
-    private String redirectURI403;
+    private static NotFoundURIException notFoundURIException = new NotFoundURIException();
     
-    /**404路径**/
-    private String redirectURI404;
-
+    private static NotFoundPermException notFoundPermException = new NotFoundPermException();
+    
+    /** 子系统鉴权服务 **/
+    private SubSysCasService subSysCasService;
+    
+    
     /**
      * 预处理回调方法
      */
@@ -30,18 +41,18 @@ public class ShiroAuthUrlInterceptor implements HandlerInterceptor {
         
         //先判断是否存在这个映射url,不存在则redirect到404,并且返回false,不再执行下一个拦截器
         if(!UtilsRequestMappingUrl.containsURI(request)) {
-            response.sendError(response.SC_NOT_FOUND, "找不到这个页面");
+            throw notFoundURIException;
         }
-//        response.sendError(response.SC_NOT_FOUND, "找不到这个页面");
-        
-//        RequestDispatcher rd = request.getRequestDispatcher("/common/error/404");
-//        rd.forward(request, response);
-        
-        
-        throw new NotFoundURIException();
+      
         //若db检查权限无法获得这个url资源，也就是没权限，那么返回403,并且返回false,不再执行下一个拦截器
-    
-        //return false;
+        if(subSysCasService == null) {
+            subSysCasService = (SubSysCasService) UtilsSpringContext.getBean("subSysCasService");
+        }
+        
+        if( 1 == 1) {
+            throw notFoundPermException;
+        }
+        return true;
     }
 
     /**

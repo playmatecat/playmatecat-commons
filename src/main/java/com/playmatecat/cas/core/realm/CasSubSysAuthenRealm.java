@@ -24,9 +24,7 @@ import com.playmatecat.utils.spring.UtilsSpringContext;
  */
 public class CasSubSysAuthenRealm extends AuthorizingRealm {
 	
-	/**
-	 * 子系统鉴权服务
-	 */
+	/** 子系统鉴权服务 **/
 	private SubSysCasService subSysCasService;
 
 	/**

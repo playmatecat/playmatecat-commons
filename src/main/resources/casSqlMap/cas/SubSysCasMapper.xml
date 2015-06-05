@@ -19,15 +19,15 @@
     	FROM 
     		commons.role
     	INNER JOIN
-    		commons.rel_user_role
+    		commons.rel_user2role
     	ON
-    		role.id = rel_user_role.role_id
+    		role.id = rel_user2role.role_id
     	AND
-    		rel_user_role.user_id = #{userId,jdbcType=INTEGER}
+    		rel_user2role.user_id = #{userId,jdbcType=INTEGER}
     	AND	
     		role.is_deleted = 0
     	AND
-    		rel_user_role.is_deleted = 0
+    		rel_user2role.is_deleted = 0
     </select>
     
     <select id="getUserPermissions" parameterType="java.lang.Long" resultType="com.playmatecat.cas.domains.dto.PermissionDto">
@@ -37,29 +37,29 @@
     	FROM
     		commons.role
     	INNER JOIN
-    		commons.rel_user_role
+    		commons.rel_user2role
     	ON
-    		role.id = rel_user_role.role_id
+    		role.id = rel_user2role.role_id
     	AND
-    		rel_user_role.user_id = #{userId,jdbcType=INTEGER}
+    		rel_user2role.user_id = #{userId,jdbcType=INTEGER}
     	AND	
     		role.is_deleted = 0
     	AND
-    		rel_user_role.is_deleted = 0
+    		rel_user2role.is_deleted = 0
     		
     		
     	INNER JOIN
-    		commons.rel_role_permission
+    		commons.rel_role2permission
     	ON
-    		role.id = rel_role_permission.role_id
+    		role.id = rel_role2permission.role_id
     	AND
-    		rel_role_permission.is_deleted = 0 
+    		rel_role2permission.is_deleted = 0 
     		
     		  	
     	INNER JOIN
     		commons.permission
     	ON
-    		permission.id = rel_role_permission.permission_id
+    		permission.id = rel_role2permission.permission_id
     	AND
     		permission.is_deleted = 0
     		

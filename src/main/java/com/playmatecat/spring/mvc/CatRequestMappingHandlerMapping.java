@@ -77,13 +77,13 @@ public class CatRequestMappingHandlerMapping<T> extends RequestMappingHandlerMap
 	    super.registerHandlerMethod(handler, method, mapping);
     }
 
-   
-    /**
-     * 匹配url与controller的requestMapping中的表达式
-     * @param info
-     * @param request
-     * @return
-     */
+	
+	/**
+	 * 匹配url与controller的requestMapping中的表达式
+	 * @param lookupPath
+	 * @param request
+	 * @return
+	 */
     public boolean hasMatchedUrlRequestMapping(String lookupPath, HttpServletRequest request) {
         try {
             List<Match> matches = new ArrayList<Match>();
