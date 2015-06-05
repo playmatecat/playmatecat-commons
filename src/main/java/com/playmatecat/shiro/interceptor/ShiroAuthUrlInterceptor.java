@@ -6,7 +6,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.shiro.SecurityUtils;
-import org.springframework.expression.AccessException;
+import org.springframework.util.AntPathMatcher;
+import org.springframework.util.PathMatcher;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -60,10 +61,24 @@ public class ShiroAuthUrlInterceptor implements HandlerInterceptor {
         
         List<UriResourceDto> uriResourceList = subSysCasService.getUserUriResources(userId);
         
+        //spring路径ANT通配
+        //?（匹配任何单字符），*（匹配0或者任意数量的字符），**（匹配0或者更多的目录）
+        PathMatcher matcher = new AntPathMatcher();
+        String requestPath = request.getRequestURI();
+        boolean hasMatchedUri = false;
+        for(UriResourceDto peekUriResource : uriResourceList) {
+            String patternPath = peekUriResource.getUriWildcard();
+            hasMatchedUri = matcher.match(patternPath, requestPath);
+            if(hasMatchedUri == true) {
+                break;
+            }
+        }
         
-        if( 1 == 1) {
+        //如果始终未找到可以匹配的URI资源，那么认为没有权限访问这个请求的路径
+        if(!hasMatchedUri) {
             throw notFoundPermException;
         }
+        
         return true;
     }
 
