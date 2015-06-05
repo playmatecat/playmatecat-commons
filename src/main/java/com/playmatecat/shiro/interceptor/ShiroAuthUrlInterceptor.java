@@ -1,12 +1,16 @@
 package com.playmatecat.shiro.interceptor;
 
+import java.util.List;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.shiro.SecurityUtils;
 import org.springframework.expression.AccessException;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.playmatecat.cas.domains.dto.UriResourceDto;
 import com.playmatecat.cas.service.SubSysCasService;
 import com.playmatecat.spring.exception.NotFoundPermException;
 import com.playmatecat.spring.exception.NotFoundURIException;
@@ -48,6 +52,14 @@ public class ShiroAuthUrlInterceptor implements HandlerInterceptor {
         if(subSysCasService == null) {
             subSysCasService = (SubSysCasService) UtilsSpringContext.getBean("subSysCasService");
         }
+        
+        String currentPrincipal = SecurityUtils.getSubject().getPrincipals()
+                .getPrimaryPrincipal().toString();
+        
+        Long userId = Long.valueOf(currentPrincipal);
+        
+        List<UriResourceDto> uriResourceList = subSysCasService.getUserUriResources(userId);
+        
         
         if( 1 == 1) {
             throw notFoundPermException;

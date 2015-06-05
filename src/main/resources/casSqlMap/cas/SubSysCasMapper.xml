@@ -64,4 +64,57 @@
     		permission.is_deleted = 0
     		
     </select>
+    
+    
+    
+    <select id="getUserUriResources" parameterType="java.lang.Long" resultType="com.playmatecat.cas.domains.dto.UriResourceDto">
+    	SELECT
+    		uri_resource.id as id,
+    		uri_resource.uri_wildcard as uriWildcard
+    	FROM
+    		commons.role
+    	INNER JOIN
+    		commons.rel_user2role
+    	ON
+    		role.id = rel_user2role.role_id
+    	AND
+    		rel_user2role.user_id = #{userId,jdbcType=INTEGER}
+    	AND	
+    		role.is_deleted = 0
+    	AND
+    		rel_user2role.is_deleted = 0
+    		
+    		
+    	INNER JOIN
+    		commons.rel_role2permission
+    	ON
+    		role.id = rel_role2permission.role_id
+    	AND
+    		rel_role2permission.is_deleted = 0 
+    		
+    		  	
+    	INNER JOIN
+    		commons.permission
+    	ON
+    		permission.id = rel_role2permission.permission_id
+    	AND
+    		permission.is_deleted = 0
+    		
+    		
+    	INNER JOIN
+    		rel_permission2url_resource
+    	ON
+    		permission.id = rel_permission2url_resource.permission_id
+    	AND
+    		rel_permission2url_resource.is_deleted = 0
+    		
+    	
+    	INNER JOIN
+    		uri_resource
+    	ON
+    		rel_permission2url_resource.uri_resource_id = 	uri_resource.id
+    	AND
+    		uri_resource.is_deleted = 0
+    </select>
+    
 </mapper>
