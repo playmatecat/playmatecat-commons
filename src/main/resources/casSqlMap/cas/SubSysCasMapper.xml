@@ -102,7 +102,7 @@
     		
     		
     	INNER JOIN
-    		rel_permission2url_resource
+    		commons.rel_permission2url_resource
     	ON
     		permission.id = rel_permission2url_resource.permission_id
     	AND
@@ -110,7 +110,7 @@
     		
     	
     	INNER JOIN
-    		uri_resource
+    		commons.uri_resource
     	ON
     		rel_permission2url_resource.uri_resource_id = 	uri_resource.id
     	AND

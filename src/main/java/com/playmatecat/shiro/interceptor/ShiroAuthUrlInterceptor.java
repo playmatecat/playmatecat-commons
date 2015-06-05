@@ -25,6 +25,9 @@ import com.playmatecat.utils.spring.UtilsSpringContext;
  *
  */
 public class ShiroAuthUrlInterceptor implements HandlerInterceptor {
+	
+	/**这个列表的uri会忽略**/
+	private static List<String> ignoreUriList;
     
     private static NotFoundURIException notFoundURIException = new NotFoundURIException();
     
@@ -39,12 +42,22 @@ public class ShiroAuthUrlInterceptor implements HandlerInterceptor {
      */
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
-        // TODO Auto-generated method stub
-        //关于获得所有controller映射的思路，
-        //参考dispatchr-mvc-servlet.xml文件,以及AbstractHandlerMethodMapping源码spring的第217行registerHandlerMethod方法
+
+    	//spring路径ANT通配
+        //?（匹配任何单字符），*（匹配0或者任意数量的字符），**（匹配0或者更多的目录）
+        PathMatcher matcher = new AntPathMatcher();
+        String requestPath = request.getRequestURI();
+    	
+        //先判断是否在忽略略表中,若忽略则直接返回true调用下一个拦截器
+        for(String peekIgnoreUri : ignoreUriList) {
+            String patternPath = peekIgnoreUri;
+            if(matcher.match(patternPath, requestPath)) {
+                return true;
+            }
+        }
         
-        
-        //先判断是否存在这个映射url,不存在则redirect到404,并且返回false,不再执行下一个拦截器
+
+        //判断是否存在这个映射url,不存在则redirect到404,并且返回false,不再执行下一个拦截器
         if(!UtilsRequestMappingUrl.containsURI(request)) {
             throw notFoundURIException;
         }
@@ -61,10 +74,7 @@ public class ShiroAuthUrlInterceptor implements HandlerInterceptor {
         
         List<UriResourceDto> uriResourceList = subSysCasService.getUserUriResources(userId);
         
-        //spring路径ANT通配
-        //?（匹配任何单字符），*（匹配0或者任意数量的字符），**（匹配0或者更多的目录）
-        PathMatcher matcher = new AntPathMatcher();
-        String requestPath = request.getRequestURI();
+        
         boolean hasMatchedUri = false;
         for(UriResourceDto peekUriResource : uriResourceList) {
             String patternPath = peekUriResource.getUriWildcard();
@@ -97,5 +107,13 @@ public class ShiroAuthUrlInterceptor implements HandlerInterceptor {
     public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) throws Exception {
         //do nothing
     }
+
+	public List<String> getIgnoreUriList() {
+		return ignoreUriList;
+	}
+
+	public void setIgnoreUriList(List<String> ignoreUriList) {
+		this.ignoreUriList = ignoreUriList;
+	}
 
 }
