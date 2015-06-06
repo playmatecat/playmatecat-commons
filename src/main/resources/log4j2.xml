@@ -8,10 +8,6 @@
 		</Console>
 	</Appenders>
 	<Loggers>
-		<Logger name="log4j.logger.java.sql.PreparedStatement" level="DEBUG"
-			additivity="false">
-			<appender-ref ref="Console" />
-		</Logger>
 		<Logger name="druid.sql.Statement" level="DEBUG"
             additivity="false">
             <appender-ref ref="Console" />
