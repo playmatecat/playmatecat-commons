@@ -112,7 +112,7 @@
     	INNER JOIN
     		commons.uri_resource
     	ON
-    		rel_permission2url_resource.uri_resource_id = 	uri_resource.id
+    		rel_permission2url_resource.uri_resource_id = uri_resource.id
     	AND
     		uri_resource.is_deleted = 0
     </select>
