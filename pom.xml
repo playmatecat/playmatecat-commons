@@ -16,7 +16,7 @@
 		<fastjson.version>[1.2.5,1.9)</fastjson.version>
 		<slf4j.version>[1.7.12,1.9)</slf4j.version>
 		<commons-lang3.version>[3.4,4.0)</commons-lang3.version>
-		<log4j.version>[1.2.17,2.0)</log4j.version>
+		<log4j2.version>[2.3,2.9)</log4j2.version>
 		<httpclient.version>[4.4.1,4.9)</httpclient.version>
 		<servlet-api.version>2.5</servlet-api.version>
 		<jsp-api.version>[2.2,3.0)</jsp-api.version>
@@ -25,7 +25,8 @@
 		<druid.version>[1.0.14,1.1)</druid.version>
 		<mybatis.vesrion>[3.3.0,3.9)</mybatis.vesrion>
 		<mybatis-spring.version>[1.2.2,1.9)</mybatis-spring.version>
-		<mysql-connector-java.version>[5.1.35,5.9)</mysql-connector-java.version>-->
+		<mysql-connector-java.version>[5.1.35,5.9)</mysql-connector-java.version>
+		<commons-pool2.version>[2.4.1,2.9)</commons-pool2.version>-->
 		
 		
 		
@@ -37,7 +38,7 @@
 		<fastjson.version>1.2.5</fastjson.version>
 		<slf4j.version>1.7.12</slf4j.version>
 		<commons-lang3.version>3.4</commons-lang3.version>
-		<log4j.version>1.2.17</log4j.version>
+		<log4j2.version>2.3</log4j2.version>
 		<httpclient.version>4.4.1</httpclient.version>
 		<servlet-api.version>2.5</servlet-api.version>
 		<jsp-api.version>2.2</jsp-api.version>
@@ -47,6 +48,7 @@
 		<mybatis.vesrion>3.3.0</mybatis.vesrion>
 		<mybatis-spring.version>1.2.2</mybatis-spring.version>
 		<mysql-connector-java.version>5.1.35</mysql-connector-java.version>
+		<commons-pool2.version>2.4.1</commons-pool2.version>
 		
 	</properties>
 
@@ -147,6 +149,7 @@
 			<artifactId>slf4j-api</artifactId>
 			<version>${slf4j.version}</version>
 		</dependency>
+		
 		<dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-log4j12</artifactId>
@@ -162,11 +165,11 @@
 		
 
 		<!--log4j -->
-		<dependency>
+		<!-- <dependency>
 			<groupId>log4j</groupId>
 			<artifactId>log4j</artifactId>
 			<version>${log4j.version}</version>
-		</dependency>
+		</dependency> -->
 
 		<!-- spring -->
 		<!-- spring jdbc,mybatis会依赖它 -->
@@ -297,5 +300,54 @@
             <version>${mysql-connector-java.version}</version>
         </dependency>
 
+
+        <!--/# log4j2 开始-->
+		<dependency>
+			<groupId>org.apache.logging.log4j</groupId>
+			<artifactId>log4j-api</artifactId>
+			<version>${log4j2.version}</version>
+		</dependency>
+	
+		<dependency>
+			<groupId>org.apache.logging.log4j</groupId>
+			<artifactId>log4j-core</artifactId>
+			<version>${log4j2.version}</version>
+		</dependency>
+		
+		<dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-web</artifactId>
+            <version>${log4j2.version}</version>
+        </dependency>
+        
+        <!-- spring 要使用log4j 2的话话必须加载1.2的接口API -->
+		<dependency>
+			<groupId>org.apache.logging.log4j</groupId>
+			<artifactId>log4j-1.2-api</artifactId>
+			<version>${log4j2.version}</version>
+		</dependency>
+        
+        <!-- log4j 2接管sfl4j的依赖包 -->
+		<!-- 如果要整合sfl4j就不能用log4j-to-slf4j,会递归反射造成堆栈溢出
+		<dependency>
+			<groupId>org.apache.logging.log4j</groupId>
+			<artifactId>log4j-to-slf4j</artifactId>
+			<version>2.3</version>
+		</dependency> -->
+		<dependency>
+			<groupId>org.apache.logging.log4j</groupId>
+			<artifactId>log4j-slf4j-impl</artifactId>
+			<version>${log4j2.version}</version>
+		</dependency>
+
+        <!-- log4j 2依赖于这个包 -->
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-pool2</artifactId>
+			<version>${commons-pool2.version}</version>
+		</dependency>
+        <!--/. log4j2结束 -->
+         
+         
 	</dependencies>
 </project>

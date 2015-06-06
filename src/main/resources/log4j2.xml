@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<Configuration status="OFF">
+	<Appenders>
+		<Console name="Console" target="SYSTEM_OUT">
+			<PatternLayout
+				pattern="%d{yyyy-MM-dd HH:mm:ss}[%p]%l %n%d{yyyy-MM-dd HH:mm:ss}[%p]%m%n" />
+		</Console>
+	</Appenders>
+	<Loggers>
+		<Logger name="log4j.logger.java.sql.PreparedStatement" level="DEBUG"
+			additivity="false">
+			<appender-ref ref="Console" />
+		</Logger>
+		<Logger name="druid.sql.Statement" level="DEBUG"
+            additivity="false">
+            <appender-ref ref="Console" />
+        </Logger>
+        <Logger name="druid.sql.ResultSet" level="DEBUG"
+            additivity="false">
+            <appender-ref ref="Console" />
+        </Logger>
+		
+		<Root level="INFO">
+			<AppenderRef ref="Console" />
+		</Root>
+	</Loggers>
+</Configuration>
