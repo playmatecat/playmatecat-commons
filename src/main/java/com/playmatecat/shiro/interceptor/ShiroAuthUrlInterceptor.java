@@ -72,10 +72,17 @@ public class ShiroAuthUrlInterceptor implements HandlerInterceptor {
         
         Long userId = Long.valueOf(currentPrincipal);
         
+        //获得用户角色的URI特殊权限
         List<UriResourceDto> uriResourceList = subSysCasService.getUserUriResources(userId);
         
         
         boolean hasMatchedUri = false;
+        
+        //TODO 判断用户等级表中是否存在该用户,若不存在则创建相关信息,并且将用户所属等级设置为1级(最低)
+        //若存在等级表中存在该用户,那么抽取他的等级所对应的URI资源
+        
+        
+        //判断是否有URI特殊权限
         for(UriResourceDto peekUriResource : uriResourceList) {
             String patternPath = peekUriResource.getUriWildcard();
             hasMatchedUri = matcher.match(patternPath, requestPath);

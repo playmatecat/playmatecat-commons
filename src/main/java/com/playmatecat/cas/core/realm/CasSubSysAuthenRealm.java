@@ -61,6 +61,9 @@ public class CasSubSysAuthenRealm extends AuthorizingRealm {
 				    authorizationInfo.addStringPermission(peekPermission.getCode());
 				}
 				
+				//TODO 获得子系统用户等级信息,若不存在等级信息,则创建用户等级信息,并且将用户所属等级设置为1级(最低)
+				//获得等级所对应的权限,将权限加入到用户的权限中
+				
 				subSysCasService.say();
 
 			}

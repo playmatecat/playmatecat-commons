@@ -37,7 +37,7 @@ public class UtilsSpringContext implements ApplicationContextAware {
 		try {
 			instance = (T) applicationContext.getBean(clazz);
         } catch (Exception e) {
-	        // TODO: handle exception
+	        //do nothing
         }
 		return instance;		
 	}
