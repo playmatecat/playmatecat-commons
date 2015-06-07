@@ -12,14 +12,15 @@
     </resultMap>
 -->
     
-    <select id="getUserRoles" parameterType="java.lang.Long" resultType="com.playmatecat.cas.domains.dto.RoleDto">
+    <select id="getUserRoles" parameterType="java.util.Map" resultType="com.playmatecat.cas.domains.dto.RoleDto">
+    	<![CDATA[
     	SELECT 
     		role.id as id,
     		role.code as code
     	FROM 
-    		commons.role
+    		${subSysDatabase}.role
     	INNER JOIN
-    		commons.rel_user2role
+    		${subSysDatabase}.rel_user2role
     	ON
     		role.id = rel_user2role.role_id
     	AND
@@ -28,16 +29,18 @@
     		role.is_deleted = 0
     	AND
     		rel_user2role.is_deleted = 0
+    	]]>
     </select>
     
-    <select id="getUserPermissions" parameterType="java.lang.Long" resultType="com.playmatecat.cas.domains.dto.PermissionDto">
+    <select id="getUserPermissions" parameterType="java.util.Map" resultType="com.playmatecat.cas.domains.dto.PermissionDto">
+    	<![CDATA[
     	SELECT
     		permission.id as id,
     		permission.code as code
     	FROM
-    		commons.role
+    		${subSysDatabase}.role
     	INNER JOIN
-    		commons.rel_user2role
+    		${subSysDatabase}.rel_user2role
     	ON
     		role.id = rel_user2role.role_id
     	AND
@@ -49,7 +52,7 @@
     		
     		
     	INNER JOIN
-    		commons.rel_role2permission
+    		${subSysDatabase}.rel_role2permission
     	ON
     		role.id = rel_role2permission.role_id
     	AND
@@ -57,24 +60,25 @@
     		
     		  	
     	INNER JOIN
-    		commons.permission
+    		${subSysDatabase}.permission
     	ON
     		permission.id = rel_role2permission.permission_id
     	AND
     		permission.is_deleted = 0
-    		
+    	]]>	
     </select>
     
     
     
-    <select id="getUserUriResources" parameterType="java.lang.Long" resultType="com.playmatecat.cas.domains.dto.UriResourceDto">
+    <select id="getUserUriResources" parameterType="java.util.Map" resultType="com.playmatecat.cas.domains.dto.UriResourceDto">
+    	<![CDATA[
     	SELECT
     		uri_resource.id as id,
     		uri_resource.uri_wildcard as uriWildcard
     	FROM
-    		commons.role
+    		${subSysDatabase}.role
     	INNER JOIN
-    		commons.rel_user2role
+    		${subSysDatabase}.rel_user2role
     	ON
     		role.id = rel_user2role.role_id
     	AND
@@ -86,7 +90,7 @@
     		
     		
     	INNER JOIN
-    		commons.rel_role2permission
+    		${subSysDatabase}.rel_role2permission
     	ON
     		role.id = rel_role2permission.role_id
     	AND
@@ -94,7 +98,7 @@
     		
     		  	
     	INNER JOIN
-    		commons.permission
+    		${subSysDatabase}.permission
     	ON
     		permission.id = rel_role2permission.permission_id
     	AND
@@ -102,7 +106,7 @@
     		
     		
     	INNER JOIN
-    		commons.rel_permission2url_resource
+    		${subSysDatabase}.rel_permission2url_resource
     	ON
     		permission.id = rel_permission2url_resource.permission_id
     	AND
@@ -110,11 +114,12 @@
     		
     	
     	INNER JOIN
-    		commons.uri_resource
+    		${subSysDatabase}.uri_resource
     	ON
     		rel_permission2url_resource.uri_resource_id = uri_resource.id
     	AND
     		uri_resource.is_deleted = 0
+    	]]>
     </select>
     
 </mapper>

@@ -1,6 +1,8 @@
 package com.playmatecat.cas.service;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -9,6 +11,7 @@ import com.playmatecat.cas.domains.dto.PermissionDto;
 import com.playmatecat.cas.domains.dto.RoleDto;
 import com.playmatecat.cas.domains.dto.UriResourceDto;
 import com.playmatecat.cas.mapper.SubSysCasMapper;
+import com.playmatecat.utils.spring.UtilsProperties;
 
 /**
  * 子系统服务类,除了controller之外,子系统鉴权授权也会调用它
@@ -32,7 +35,12 @@ public class SubSysCasService {
 	 * @return
 	 */
 	public List<RoleDto> getUserRoles(Long userId) {
-	    return subSysCasMapper.getUserRoles(userId);
+		Map<String,Object> params = new HashMap<String,Object>();
+		params.put("userId", userId);
+		
+		String subSysDatabase = UtilsProperties.getProp("cas.subsys.sys.database");
+		params.put("subSysDatabase", subSysDatabase);
+	    return subSysCasMapper.getUserRoles(params);
 	}
 	
 	/**
@@ -41,7 +49,12 @@ public class SubSysCasService {
 	 * @return
 	 */
 	public List<PermissionDto> getUserPermissions(Long userId) {
-	    return subSysCasMapper.getUserPermissions(userId);
+		Map<String,Object> params = new HashMap<String,Object>();
+		params.put("userId", userId);
+		
+		String subSysDatabase = UtilsProperties.getProp("cas.subsys.sys.database");
+		params.put("subSysDatabase", subSysDatabase);
+	    return subSysCasMapper.getUserPermissions(params);
 	}
 	
 	/**
@@ -50,6 +63,12 @@ public class SubSysCasService {
      * @return
      */
 	public List<UriResourceDto> getUserUriResources(Long userId) {
-	    return subSysCasMapper.getUserUriResources(userId);
+		Map<String,Object> params = new HashMap<String,Object>();
+		params.put("userId", userId);
+		
+		String subSysDatabase = UtilsProperties.getProp("cas.subsys.sys.database");
+		params.put("subSysDatabase", subSysDatabase);
+		
+	    return subSysCasMapper.getUserUriResources(params);
 	}
 }
