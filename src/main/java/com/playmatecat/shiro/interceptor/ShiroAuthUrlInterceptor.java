@@ -6,6 +6,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.subject.PrincipalCollection;
 import org.springframework.util.AntPathMatcher;
 import org.springframework.util.PathMatcher;
 import org.springframework.web.servlet.HandlerInterceptor;
@@ -67,29 +68,41 @@ public class ShiroAuthUrlInterceptor implements HandlerInterceptor {
             subSysCasService = (SubSysCasService) UtilsSpringContext.getBean("subSysCasService");
         }
         
-        String currentPrincipal = SecurityUtils.getSubject().getPrincipals()
-                .getPrimaryPrincipal().toString();
-        
-        Long userId = Long.valueOf(currentPrincipal);
-        
-        //获得用户角色的URI特殊权限
-        List<UriResourceDto> uriResourceList = subSysCasService.getUserUriResources(userId);
         
         
         boolean hasMatchedUri = false;
+        //TODO 获得游客等级所可以访问的匿名的URI
+        //若有课可以匿名访问这request URI,那么则return true
         
-        //TODO 判断用户等级表中是否存在该用户,若不存在则创建相关信息,并且将用户所属等级设置为1级(最低)
-        //若存在等级表中存在该用户,那么抽取他的等级所对应的URI资源
         
-        
-        //判断是否有URI特殊权限
-        for(UriResourceDto peekUriResource : uriResourceList) {
-            String patternPath = peekUriResource.getUriWildcard();
-            hasMatchedUri = matcher.match(patternPath, requestPath);
-            if(hasMatchedUri == true) {
-                break;
+        PrincipalCollection principals = SecurityUtils.getSubject().getPrincipals();
+        if(principals != null) {
+            //若已是是已登录用户(user级),那么查看用户所属等级对应的可见URI
+            String currentPrincipal = SecurityUtils.getSubject().getPrincipals()
+                    .getPrimaryPrincipal().toString();
+            
+            Long userId = Long.valueOf(currentPrincipal);
+            
+            //获得用户角色的URI特殊权限
+            List<UriResourceDto> uriResourceList = subSysCasService.getUserUriResources(userId);
+            
+            
+            
+            
+            //TODO 判断用户等级表中是否存在该用户,若不存在则创建相关信息,并且将用户所属等级设置为1级(最低)
+            //若存在等级表中存在该用户,那么抽取他的等级所对应的URI资源
+            
+            
+            //判断是否有URI特殊权限
+            for(UriResourceDto peekUriResource : uriResourceList) {
+                String patternPath = peekUriResource.getUriWildcard();
+                hasMatchedUri = matcher.match(patternPath, requestPath);
+                if(hasMatchedUri == true) {
+                    break;
+                }
             }
         }
+       
         
         //如果始终未找到可以匹配的URI资源，那么认为没有权限访问这个请求的路径
         if(!hasMatchedUri) {

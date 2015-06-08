@@ -75,10 +75,10 @@ public class SubSysCasService {
 	
 	/**
 	 *  获得子系统用户等级信息id
-	 *  若不存在等级信息,则创建用户等级信息,并且将用户所属等级设置为1级(最低)
+	 *  若不存在等级信息,则创建用户等级信息,并且将用户所属等级设置为1级(最低),游客(匿名访问者)等级为0
 	 * @return
 	 */
-	public Long getOrInitUserLevelId(Long userId) throws Exception{
+	public Long getOrInitUserLevelId(Long userId) throws Exception {
 	    
 	    Long rtnLevelId;
 	    
@@ -110,5 +110,20 @@ public class SubSysCasService {
 	    }
 	    
 	    return rtnLevelId;
+	}
+	
+	/**
+	 * 获得某个用户的等级所对应的权限
+	 * @param levelId
+	 * @return
+	 */
+	public List<PermissionDto> getLevelPermissions(Long levelId) {
+	    Map<String,Object> params = new HashMap<String,Object>();
+        String subSysDatabase = UtilsProperties.getProp("cas.subsys.sys.database");
+        params.put("subSysDatabase", subSysDatabase);
+        
+        params.put("levelId", levelId);
+        
+        return subSysCasMapper.getLevelPermissions(params);
 	}
 }

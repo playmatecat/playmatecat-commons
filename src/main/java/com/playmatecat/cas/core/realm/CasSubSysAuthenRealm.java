@@ -3,6 +3,8 @@ package com.playmatecat.cas.core.realm;
 import java.util.List;
 
 import org.apache.commons.lang3.math.NumberUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.AuthenticationInfo;
 import org.apache.shiro.authc.AuthenticationToken;
@@ -24,61 +26,74 @@ import com.playmatecat.utils.spring.UtilsSpringContext;
  *
  */
 public class CasSubSysAuthenRealm extends AuthorizingRealm {
+    
+    private static Logger logger = LogManager.getLogger("CasSubSysAuthenRealm");
 	
     /**子系统有用用户等级表=true**/
     private final static String USER_LEVEL_OPEN = "true";
     
 	/** 子系统鉴权服务 **/
-	private SubSysCasService subSysCasService;
+    private SubSysCasService subSysCasService;
 
 	/**
 	 * 鉴权、授权
 	 */
-	@Override
+    @Override
     protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principals) {
-		
-		SimpleAuthorizationInfo authorizationInfo = null;
 
-		Object primaryPrincipal = principals.getPrimaryPrincipal();
-		if(primaryPrincipal != null) {
-			String currentPrincipal = principals.getPrimaryPrincipal().toString();
-			//判断存入的是否是用户数字id
-			if(NumberUtils.isDigits(currentPrincipal)){
-				Long userId = Long.valueOf(currentPrincipal);
-				
-				//从db获得该用户的角色、权限
-				if(subSysCasService == null) {
-					subSysCasService = (SubSysCasService) UtilsSpringContext.getBean("subSysCasService");
-				}
-				
-				//把角色和权限信息写入用户信息
-				authorizationInfo = new SimpleAuthorizationInfo();
-				
-				List<RoleDto> roleList = subSysCasService.getUserRoles(userId);
-				for(RoleDto peekRole :roleList) {
-				    authorizationInfo.addRole(peekRole.getCode());
-				}
-				
-				
-				List<PermissionDto> permissionList = subSysCasService.getUserPermissions(userId);
-				for(PermissionDto peekPermission : permissionList) {
-				    authorizationInfo.addStringPermission(peekPermission.getCode());
-				}
-				
-				
-				//若子系统拥有等级表
-				if(UtilsProperties.getProp("cas.subsys.sys.user.level").equals(USER_LEVEL_OPEN)) {
-				  //TODO 获得子系统用户等级信息
-				  //若不存在等级信息,则创建用户等级信息,并且将用户所属等级设置为1级(最低)
-	              //获得等级所对应的权限,将权限加入到用户的权限中
-				}
-				
-				subSysCasService.say();
+        SimpleAuthorizationInfo authorizationInfo = null;
 
-			}
-		}
-		
-	    return authorizationInfo;
+        Object primaryPrincipal = principals.getPrimaryPrincipal();
+        if (primaryPrincipal != null) {
+            String currentPrincipal = principals.getPrimaryPrincipal().toString();
+            // 判断存入的是否是用户数字id
+            if (NumberUtils.isDigits(currentPrincipal)) {
+                Long userId = Long.valueOf(currentPrincipal);
+
+                // 从db获得该用户的角色、权限
+                if (subSysCasService == null) {
+                    subSysCasService = (SubSysCasService) UtilsSpringContext.getBean("subSysCasService");
+                }
+
+                // 把角色和权限信息写入用户信息
+                authorizationInfo = new SimpleAuthorizationInfo();
+
+                List<RoleDto> roleList = subSysCasService.getUserRoles(userId);
+                for (RoleDto peekRole : roleList) {
+                    authorizationInfo.addRole(peekRole.getCode());
+                }
+
+                List<PermissionDto> permissionList = subSysCasService.getUserPermissions(userId);
+                for (PermissionDto peekPermission : permissionList) {
+                    authorizationInfo.addStringPermission(peekPermission.getCode());
+                }
+
+                // 若子系统拥有等级表,尝试去获得用户所属等级对应的权限
+                if (UtilsProperties.getProp("cas.subsys.sys.user.level").equals(USER_LEVEL_OPEN)) {
+                    // 获得子系统用户等级信息
+                    // 若不存在等级信息,则创建用户等级信息,并且将用户所属等级设置为1级(最低)
+                    Long levelId = null;
+                    try {
+                        levelId = subSysCasService.getOrInitUserLevelId(userId);
+                    } catch (Exception e) {
+                        logger.error(e);
+                    }
+                    
+                    // 获得等级所对应的权限,将权限加入到用户的权限中
+                    if(levelId != null) {
+                        List<PermissionDto> levelPermList = subSysCasService.getLevelPermissions(levelId);
+                        for (PermissionDto peekLevelPerm : levelPermList) {
+                            authorizationInfo.addStringPermission(peekLevelPerm.getCode());
+                        }
+                    }
+                }
+
+                subSysCasService.say();
+
+            }
+        }
+
+        return authorizationInfo;
     }
 	
 	/**

@@ -30,6 +30,13 @@ public interface SubSysCasMapper {
 	public List<PermissionDto> getUserPermissions(Map<String,Object> params);
 	
 	/**
+	 * 获得某个用户的等级所对应的权限
+	 * @param levelId
+	 * @return
+	 */
+	public List<PermissionDto> getLevelPermissions(Map<String,Object> params);
+	
+	/**
 	 * 获得某个用户的可访问的uri列表
 	 * @param params
 	 * @return
