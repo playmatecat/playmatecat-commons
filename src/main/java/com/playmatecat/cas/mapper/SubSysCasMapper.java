@@ -6,6 +6,7 @@ import java.util.Map;
 import com.playmatecat.cas.domains.dto.PermissionDto;
 import com.playmatecat.cas.domains.dto.RoleDto;
 import com.playmatecat.cas.domains.dto.UriResourceDto;
+import com.playmatecat.cas.domains.dto.UserLevelDto;
 
 /**
  * cas mybatis接口
@@ -34,4 +35,25 @@ public interface SubSysCasMapper {
 	 * @return
 	 */
 	public List<UriResourceDto> getUserUriResources(Map<String,Object> params);
+	
+	/**
+	 * 获得某个用户的用户等级id
+	 * @param params
+	 * @return
+	 */
+	public Long getUserLevelId(Map<String,Object> params);
+	
+	/**
+	 * 添加某个用户的用户等级
+	 * @param userLevelDto
+	 * @return
+	 */
+	public int addUserLevel(Map<String,Object> params);
+	
+	/**
+	 * 获得等级字典,某个条件的等级的id
+	 * @param params
+	 * @return
+	 */
+	public Long getLevelDictId(Map<String,Object> params);
 }

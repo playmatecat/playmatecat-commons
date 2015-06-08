@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import com.playmatecat.cas.domains.dto.PermissionDto;
 import com.playmatecat.cas.domains.dto.RoleDto;
 import com.playmatecat.cas.domains.dto.UriResourceDto;
+import com.playmatecat.cas.domains.dto.UserLevelDto;
 import com.playmatecat.cas.mapper.SubSysCasMapper;
 import com.playmatecat.utils.spring.UtilsProperties;
 
@@ -36,10 +37,10 @@ public class SubSysCasService {
 	 */
 	public List<RoleDto> getUserRoles(Long userId) {
 		Map<String,Object> params = new HashMap<String,Object>();
-		params.put("userId", userId);
-		
 		String subSysDatabase = UtilsProperties.getProp("cas.subsys.sys.database");
-		params.put("subSysDatabase", subSysDatabase);
+        params.put("subSysDatabase", subSysDatabase);
+        
+        params.put("userId", userId);
 	    return subSysCasMapper.getUserRoles(params);
 	}
 	
@@ -50,10 +51,10 @@ public class SubSysCasService {
 	 */
 	public List<PermissionDto> getUserPermissions(Long userId) {
 		Map<String,Object> params = new HashMap<String,Object>();
-		params.put("userId", userId);
-		
 		String subSysDatabase = UtilsProperties.getProp("cas.subsys.sys.database");
-		params.put("subSysDatabase", subSysDatabase);
+        params.put("subSysDatabase", subSysDatabase);
+        
+        params.put("userId", userId);
 	    return subSysCasMapper.getUserPermissions(params);
 	}
 	
@@ -64,11 +65,50 @@ public class SubSysCasService {
      */
 	public List<UriResourceDto> getUserUriResources(Long userId) {
 		Map<String,Object> params = new HashMap<String,Object>();
+		String subSysDatabase = UtilsProperties.getProp("cas.subsys.sys.database");
+        params.put("subSysDatabase", subSysDatabase);
+        
 		params.put("userId", userId);
 		
-		String subSysDatabase = UtilsProperties.getProp("cas.subsys.sys.database");
-		params.put("subSysDatabase", subSysDatabase);
-		
 	    return subSysCasMapper.getUserUriResources(params);
+	}
+	
+	/**
+	 *  获得子系统用户等级信息id
+	 *  若不存在等级信息,则创建用户等级信息,并且将用户所属等级设置为1级(最低)
+	 * @return
+	 */
+	public Long getOrInitUserLevelId(Long userId) throws Exception{
+	    
+	    Long rtnLevelId;
+	    
+	    Map<String,Object> params = new HashMap<String,Object>();
+        params.put("userId", userId);
+        
+        String subSysDatabase = UtilsProperties.getProp("cas.subsys.sys.database");
+        params.put("subSysDatabase", subSysDatabase);
+	    Long levelId = subSysCasMapper.getUserLevelId(params);
+	    
+	    if(levelId == null) {
+	        //若不存在等级信息,则创建用户等级信息,并且将用户所属等级设置为1级(最低)
+	        //获得系统最低等级的等级id
+	        Map<String,Object> levelDictParams = new HashMap<String,Object>();
+	        levelDictParams.put("subSysDatabase", subSysDatabase);
+	        
+	        levelDictParams.put("level", 1);
+	        Long lowestLevelId = subSysCasMapper.getLevelDictId(levelDictParams);
+	        if(lowestLevelId == null) {
+	            throw new Exception("子系统不存在等级表,或者不存在等级为1的等级");
+	        }
+	        
+	        //将用户设置为最低等级,写入用户等级表
+	        params.put("levelId", lowestLevelId);
+	        subSysCasMapper.addUserLevel(params);
+	        rtnLevelId = lowestLevelId;
+	    } else {
+	        rtnLevelId = levelId;
+	    }
+	    
+	    return rtnLevelId;
 	}
 }
