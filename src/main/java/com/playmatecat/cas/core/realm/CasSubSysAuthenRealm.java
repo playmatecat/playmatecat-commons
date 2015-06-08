@@ -14,6 +14,7 @@ import org.apache.shiro.subject.PrincipalCollection;
 import com.playmatecat.cas.domains.dto.PermissionDto;
 import com.playmatecat.cas.domains.dto.RoleDto;
 import com.playmatecat.cas.service.SubSysCasService;
+import com.playmatecat.utils.spring.UtilsProperties;
 import com.playmatecat.utils.spring.UtilsSpringContext;
 
 /**
@@ -24,6 +25,9 @@ import com.playmatecat.utils.spring.UtilsSpringContext;
  */
 public class CasSubSysAuthenRealm extends AuthorizingRealm {
 	
+    /**子系统有用用户等级表=true**/
+    private final static String USER_LEVEL_OPEN = "true";
+    
 	/** 子系统鉴权服务 **/
 	private SubSysCasService subSysCasService;
 
@@ -61,8 +65,13 @@ public class CasSubSysAuthenRealm extends AuthorizingRealm {
 				    authorizationInfo.addStringPermission(peekPermission.getCode());
 				}
 				
-				//TODO 获得子系统用户等级信息,若不存在等级信息,则创建用户等级信息,并且将用户所属等级设置为1级(最低)
-				//获得等级所对应的权限,将权限加入到用户的权限中
+				
+				//若子系统拥有等级表
+				if(UtilsProperties.getProp("cas.subsys.sys.user.level").equals(USER_LEVEL_OPEN)) {
+				  //TODO 获得子系统用户等级信息
+				  //若不存在等级信息,则创建用户等级信息,并且将用户所属等级设置为1级(最低)
+	              //获得等级所对应的权限,将权限加入到用户的权限中
+				}
 				
 				subSysCasService.say();
 
