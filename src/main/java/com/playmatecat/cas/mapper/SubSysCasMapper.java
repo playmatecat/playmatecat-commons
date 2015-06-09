@@ -44,6 +44,13 @@ public interface SubSysCasMapper {
 	public List<UriResourceDto> getUserUriResources(Map<String,Object> params);
 	
 	/**
+	 * 获得匿名用户的可访问的uri列表
+	 * @param params
+	 * @return
+	 */
+	public List<UriResourceDto> getAnonymousUriResource(Map<String,Object> params);
+	
+	/**
 	 * 获得某个用户的用户等级id
 	 * @param params
 	 * @return

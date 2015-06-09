@@ -5,6 +5,8 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.subject.PrincipalCollection;
 import org.springframework.util.AntPathMatcher;
@@ -26,6 +28,8 @@ import com.playmatecat.utils.spring.UtilsSpringContext;
  *
  */
 public class ShiroAuthUrlInterceptor implements HandlerInterceptor {
+    
+    private static Logger logger = LogManager.getLogger("ShiroAuthUrlInterceptor");
 	
 	/**这个列表的uri会忽略**/
 	private static List<String> ignoreUriList;
@@ -35,7 +39,7 @@ public class ShiroAuthUrlInterceptor implements HandlerInterceptor {
     private static NotFoundPermException notFoundPermException = new NotFoundPermException();
     
     /** 子系统鉴权服务 **/
-    private SubSysCasService subSysCasService;
+    private static SubSysCasService subSysCasService;
     
     
     /**
@@ -49,30 +53,74 @@ public class ShiroAuthUrlInterceptor implements HandlerInterceptor {
         PathMatcher matcher = new AntPathMatcher();
         String requestPath = request.getRequestURI();
     	
+        //先判断是否在忽略略表中(一般对static资源路径忽略),若忽略则直接返回true调用下一个拦截器
+        if(isIgnorePath(requestPath)) {
+            return true;
+        }
+        
+        //判断controller是否存在这个映射url,不存在则redirect到404,并且返回false,不再执行下一个拦截器
+        if(!UtilsRequestMappingUrl.containsURI(request)) {
+            throw notFoundURIException;
+        }
+
+        //如果始终未找到可以匹配的URI资源权限，那么认为没有权限访问这个请求的路径
+        if(!hasAccessableUri(requestPath)) {
+            throw notFoundPermException;
+        }
+        
+        return true;
+    }
+    
+    /**
+     * 判断是否是拦截器忽略的uri路径
+     * @param requestPath
+     * @return
+     */
+    private static boolean isIgnorePath(String requestPath) {
+        
+        boolean isIgnorePath = false;
+        //spring路径ANT通配
+        //?（匹配任何单字符），*（匹配0或者任意数量的字符），**（匹配0或者更多的目录）
+        PathMatcher matcher = new AntPathMatcher();
+        
         //先判断是否在忽略略表中,若忽略则直接返回true调用下一个拦截器
         for(String peekIgnoreUri : ignoreUriList) {
             String patternPath = peekIgnoreUri;
             if(matcher.match(patternPath, requestPath)) {
-                return true;
+                isIgnorePath = true;
+                break;
             }
         }
         
-
-        //判断是否存在这个映射url,不存在则redirect到404,并且返回false,不再执行下一个拦截器
-        if(!UtilsRequestMappingUrl.containsURI(request)) {
-            throw notFoundURIException;
-        }
-      
+        return isIgnorePath;
+    }
+    
+    /**
+     * 判断当前访问者(包括匿名)是否可以访问这个uri
+     * @param requestPath
+     * @return
+     */
+    private static boolean hasAccessableUri(String requestPath) {
+        boolean hasMatchedUri = false;
+        
+        
         //若db检查权限无法获得这个url资源，也就是没权限，那么返回403,并且返回false,不再执行下一个拦截器
         if(subSysCasService == null) {
             subSysCasService = (SubSysCasService) UtilsSpringContext.getBean("subSysCasService");
         }
         
         
-        
-        boolean hasMatchedUri = false;
-        //TODO 获得游客等级所可以访问的匿名的URI
-        //若有课可以匿名访问这request URI,那么则return true
+        PathMatcher matcher = new AntPathMatcher();
+        //获得游客等级所可以访问的匿名的URI
+        //若有可以匿名访问这request URI,那么则return true
+        List<UriResourceDto> anonUriResourceList = subSysCasService.getAnonymousUriResource();
+        for(UriResourceDto peekUriResource : anonUriResourceList) {
+            String patternPath = peekUriResource.getUriWildcard();
+            hasMatchedUri = matcher.match(patternPath, requestPath);
+            if(hasMatchedUri == true) {
+                return true;
+            }
+        }
         
         
         PrincipalCollection principals = SecurityUtils.getSubject().getPrincipals();
@@ -86,11 +134,18 @@ public class ShiroAuthUrlInterceptor implements HandlerInterceptor {
             //获得用户角色的URI特殊权限
             List<UriResourceDto> uriResourceList = subSysCasService.getUserUriResources(userId);
             
-            
-            
-            
+
             //TODO 判断用户等级表中是否存在该用户,若不存在则创建相关信息,并且将用户所属等级设置为1级(最低)
             //若存在等级表中存在该用户,那么抽取他的等级所对应的URI资源
+            
+            // 获得子系统用户等级信息
+            // 若不存在等级信息,则创建用户等级信息,并且将用户所属等级设置为1级(最低)
+            Long levelId = null;
+            try {
+                levelId = subSysCasService.getOrInitUserLevelId(userId);
+            } catch (Exception e) {
+                logger.error(e);
+            }
             
             
             //判断是否有URI特殊权限
@@ -98,19 +153,20 @@ public class ShiroAuthUrlInterceptor implements HandlerInterceptor {
                 String patternPath = peekUriResource.getUriWildcard();
                 hasMatchedUri = matcher.match(patternPath, requestPath);
                 if(hasMatchedUri == true) {
-                    break;
+                    return true;
                 }
             }
         }
-       
         
-        //如果始终未找到可以匹配的URI资源，那么认为没有权限访问这个请求的路径
-        if(!hasMatchedUri) {
-            throw notFoundPermException;
-        }
-        
-        return true;
+        return hasMatchedUri;
     }
+    
+    
+    
+    
+    
+    
+    
 
     /**
      * 后处理回调方法，实现处理器的后处理（但在渲染视图之前）

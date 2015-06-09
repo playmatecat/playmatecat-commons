@@ -22,6 +22,12 @@ import com.playmatecat.utils.spring.UtilsProperties;
 @Service(value="subSysCasService")
 public class SubSysCasService {
     
+    /**初级最低等级**/
+    private final static long NOVICE_LEVEL = 1L;
+    
+    /**匿名等级**/
+    private final static long ANONYMOUS_LEVEL = 0L;
+    
     @Autowired
     private SubSysCasMapper subSysCasMapper;
     
@@ -74,6 +80,21 @@ public class SubSysCasService {
 	}
 	
 	/**
+	 * 获得匿名用户的可访问的uri列表
+	 * @return
+	 */
+	public List<UriResourceDto> getAnonymousUriResource() {
+	    Map<String,Object> params = new HashMap<String,Object>();
+        String subSysDatabase = UtilsProperties.getProp("cas.subsys.sys.database");
+        params.put("subSysDatabase", subSysDatabase);
+        
+        params.put("level", ANONYMOUS_LEVEL);
+        
+        return subSysCasMapper.getAnonymousUriResource(params);
+	}
+	
+	
+	/**
 	 *  获得子系统用户等级信息id
 	 *  若不存在等级信息,则创建用户等级信息,并且将用户所属等级设置为1级(最低),游客(匿名访问者)等级为0
 	 * @return
@@ -95,7 +116,7 @@ public class SubSysCasService {
 	        Map<String,Object> levelDictParams = new HashMap<String,Object>();
 	        levelDictParams.put("subSysDatabase", subSysDatabase);
 	        
-	        levelDictParams.put("level", 1);
+	        levelDictParams.put("level", NOVICE_LEVEL);
 	        Long lowestLevelId = subSysCasMapper.getLevelDictId(levelDictParams);
 	        if(lowestLevelId == null) {
 	            throw new Exception("子系统不存在等级表,或者不存在等级为1的等级");
