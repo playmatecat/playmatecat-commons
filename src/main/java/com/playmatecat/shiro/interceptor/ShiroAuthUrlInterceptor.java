@@ -14,6 +14,7 @@ import org.springframework.util.PathMatcher;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.playmatecat.cas.constants.LevelDictConstants;
 import com.playmatecat.cas.domains.dto.UriResourceDto;
 import com.playmatecat.cas.service.SubSysCasService;
 import com.playmatecat.spring.exception.NotFoundPermException;
@@ -41,6 +42,8 @@ public class ShiroAuthUrlInterceptor implements HandlerInterceptor {
     /** 子系统鉴权服务 **/
     private static SubSysCasService subSysCasService;
     
+    /**spring路径ANT通配 ?（匹配任何单字符），*（匹配0或者任意数量的字符），**（匹配0或者更多的目录）**/
+    private static PathMatcher matcher = new AntPathMatcher();
     
     /**
      * 预处理回调方法
@@ -48,10 +51,13 @@ public class ShiroAuthUrlInterceptor implements HandlerInterceptor {
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
 
-    	//spring路径ANT通配
-        //?（匹配任何单字符），*（匹配0或者任意数量的字符），**（匹配0或者更多的目录）
-        PathMatcher matcher = new AntPathMatcher();
+    	
         String requestPath = request.getRequestURI();
+        
+        //初始化服务类
+        if(subSysCasService == null) {
+            subSysCasService = (SubSysCasService) UtilsSpringContext.getBean("subSysCasService");
+        }
     	
         //先判断是否在忽略略表中(一般对static资源路径忽略),若忽略则直接返回true调用下一个拦截器
         if(isIgnorePath(requestPath)) {
@@ -79,9 +85,6 @@ public class ShiroAuthUrlInterceptor implements HandlerInterceptor {
     private static boolean isIgnorePath(String requestPath) {
         
         boolean isIgnorePath = false;
-        //spring路径ANT通配
-        //?（匹配任何单字符），*（匹配0或者任意数量的字符），**（匹配0或者更多的目录）
-        PathMatcher matcher = new AntPathMatcher();
         
         //先判断是否在忽略略表中,若忽略则直接返回true调用下一个拦截器
         for(String peekIgnoreUri : ignoreUriList) {
@@ -100,73 +103,122 @@ public class ShiroAuthUrlInterceptor implements HandlerInterceptor {
      * @param requestPath
      * @return
      */
-    private static boolean hasAccessableUri(String requestPath) {
+    private static boolean hasAccessableUri(String requestPath) throws Exception{
         boolean hasMatchedUri = false;
         
-        
-        //若db检查权限无法获得这个url资源，也就是没权限，那么返回403,并且返回false,不再执行下一个拦截器
-        if(subSysCasService == null) {
-            subSysCasService = (SubSysCasService) UtilsSpringContext.getBean("subSysCasService");
-        }
-        
-        
-        PathMatcher matcher = new AntPathMatcher();
-        //获得游客等级所可以访问的匿名的URI
+
+        //@STEP 获得游客等级所可以访问的匿名的URI
         //若有可以匿名访问这request URI,那么则return true
-        List<UriResourceDto> anonUriResourceList = subSysCasService.getAnonymousUriResource();
-        for(UriResourceDto peekUriResource : anonUriResourceList) {
-            String patternPath = peekUriResource.getUriWildcard();
-            hasMatchedUri = matcher.match(patternPath, requestPath);
-            if(hasMatchedUri == true) {
-                return true;
-            }
+        if(hasMatchedAnonUri(requestPath)) {
+            return true;
         }
         
         
+        //@STEP 若已是是已登录用户(user级)
         PrincipalCollection principals = SecurityUtils.getSubject().getPrincipals();
         if(principals != null) {
-            //若已是是已登录用户(user级),那么查看用户所属等级对应的可见URI
-            String currentPrincipal = SecurityUtils.getSubject().getPrincipals()
-                    .getPrimaryPrincipal().toString();
+            //判断是否有角色对应的权限的URI
+            if(hasMatchedRoleUri(requestPath)){
+                return true;
+            }
             
-            Long userId = Long.valueOf(currentPrincipal);
-            
-            //获得用户角色的URI特殊权限
-            List<UriResourceDto> uriResourceList = subSysCasService.getUserUriResources(userId);
-            
+            //判断用户拥有的等级是否有对应的URI权限
+            if(hasMatchedLevelUri(requestPath)) {
+                return true;
+            }
 
-            //TODO 判断用户等级表中是否存在该用户,若不存在则创建相关信息,并且将用户所属等级设置为1级(最低)
-            //若存在等级表中存在该用户,那么抽取他的等级所对应的URI资源
-            
-            // 获得子系统用户等级信息
-            // 若不存在等级信息,则创建用户等级信息,并且将用户所属等级设置为1级(最低)
-            Long levelId = null;
-            try {
-                levelId = subSysCasService.getOrInitUserLevelId(userId);
-            } catch (Exception e) {
-                logger.error(e);
-            }
-            
-            
-            //判断是否有URI特殊权限
-            for(UriResourceDto peekUriResource : uriResourceList) {
-                String patternPath = peekUriResource.getUriWildcard();
-                hasMatchedUri = matcher.match(patternPath, requestPath);
-                if(hasMatchedUri == true) {
-                    return true;
-                }
-            }
         }
         
         return hasMatchedUri;
     }
     
     
+    /**
+     * 获得是否存在游客等级所可以访问的匿名的URI
+     * @param requestPath
+     */
+    private static boolean hasMatchedAnonUri(String requestPath) {
+        boolean isMatched = false;
+
+        // @STEP 获得游客等级所可以访问的匿名的URI
+        // 若有可以匿名访问这request URI,那么则return true
+        List<UriResourceDto> anonUriResourceList = subSysCasService.getLevelUriResource(LevelDictConstants.ANONYMOUS_LEVEL);
+        for (UriResourceDto peekUriResource : anonUriResourceList) {
+            String patternPath = peekUriResource.getUriWildcard();
+            isMatched = matcher.match(patternPath, requestPath);
+            if (isMatched == true) {
+                break;
+            }
+        }
+        
+        return isMatched;
+    }
     
+    /**
+     * 判断是否有角色对应的权限的URI
+     * @param requestPath
+     * @return
+     */
+    private static boolean hasMatchedRoleUri(String requestPath) {
+        boolean isMatched = false;
+         
+        if(SecurityUtils.getSubject().getPrincipals() != null) {
+            //若已是是已登录用户(user级),那么查看用户所属等级对应的可见URI
+            String currentPrincipal = SecurityUtils.getSubject().getPrincipals()
+                    .getPrimaryPrincipal().toString();
+            
+            Long userId = Long.valueOf(currentPrincipal);
+            
+            //@STEP 获得用户角色的URI特殊权限
+            List<UriResourceDto> uriResourceList = subSysCasService.getRoleUriResources(userId);
+            
+            //判断是否有URI特殊权限
+            for(UriResourceDto peekUriResource : uriResourceList) {
+                String patternPath = peekUriResource.getUriWildcard();
+                isMatched = matcher.match(patternPath, requestPath);
+                if(isMatched == true) {
+                    break;
+                }
+            }
+        }
+       
+        return isMatched;
+    }
     
-    
-    
-    
+    /**
+     * 判断用户拥有的等级是否有对应的URI权限
+     * @param requestPath
+     * @return
+     * @throws Exception
+     */
+    private static boolean hasMatchedLevelUri(String requestPath) throws Exception{
+        boolean isMatched = false;
+        
+        if(SecurityUtils.getSubject().getPrincipals() != null) {
+            //若已是是已登录用户(user级),那么查看用户所属等级对应的可见URI
+            String currentPrincipal = SecurityUtils.getSubject().getPrincipals()
+                    .getPrimaryPrincipal().toString();
+            Long userId = Long.valueOf(currentPrincipal);
+        
+            //@STEP 获得用户等级可以访问的权限
+            // 获得子系统用户等级信息
+            Integer level = subSysCasService.getOrInitUserLevel(userId);
+            
+            //若当前等级有可以访问这request URI,那么则return true
+            List<UriResourceDto> levelUriResourceList 
+                = subSysCasService.getLevelUriResource(level);
+            for(UriResourceDto peekUriResource : levelUriResourceList) {
+                String patternPath = peekUriResource.getUriWildcard();
+                isMatched = matcher.match(patternPath, requestPath);
+                if(isMatched == true) {
+                    break;
+                }
+            }
+        
+        }
+        
+        return isMatched;
+    }
 
     /**
      * 后处理回调方法，实现处理器的后处理（但在渲染视图之前）

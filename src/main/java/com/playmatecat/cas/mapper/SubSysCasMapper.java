@@ -37,25 +37,25 @@ public interface SubSysCasMapper {
 	public List<PermissionDto> getLevelPermissions(Map<String,Object> params);
 	
 	/**
-	 * 获得某个用户的可访问的uri列表
+	 * 获得某个用户拥有的角色可访问的uri列表
 	 * @param params
 	 * @return
 	 */
-	public List<UriResourceDto> getUserUriResources(Map<String,Object> params);
+	public List<UriResourceDto> getRoleUriResources(Map<String,Object> params);
 	
 	/**
-	 * 获得匿名用户的可访问的uri列表
+	 * 获得某个等级用户的可访问的uri列表
 	 * @param params
 	 * @return
 	 */
-	public List<UriResourceDto> getAnonymousUriResource(Map<String,Object> params);
+	public List<UriResourceDto> getLevelUriResource(Map<String,Object> params);
 	
 	/**
-	 * 获得某个用户的用户等级id
+	 * 获得某个用户的用户等级
 	 * @param params
 	 * @return
 	 */
-	public Long getUserLevelId(Map<String,Object> params);
+	public Integer getUserLevel(Map<String,Object> params);
 	
 	/**
 	 * 添加某个用户的用户等级

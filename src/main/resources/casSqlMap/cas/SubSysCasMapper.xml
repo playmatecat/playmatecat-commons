@@ -70,7 +70,7 @@
     
     
     
-    <select id="getUserUriResources" parameterType="java.util.Map" resultType="com.playmatecat.cas.domains.dto.UriResourceDto">
+    <select id="getRoleUriResources" parameterType="java.util.Map" resultType="com.playmatecat.cas.domains.dto.UriResourceDto">
     	<![CDATA[
     	SELECT
     		uri_resource.id as id,
