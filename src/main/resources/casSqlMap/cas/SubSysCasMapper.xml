@@ -122,4 +122,109 @@
     	]]>
     </select>
     
+    <select id="getLevelPermissions" parameterType="java.util.Map" resultType="com.playmatecat.cas.domains.dto.PermissionDto">
+        <![CDATA[
+        SELECT
+            permission.id as id,
+            permission.code as code
+        FROM
+            ${subSysDatabase}.level_dict
+        INNER JOIN
+            ${subSysDatabase}.rel_level_dict2permission
+        ON
+            level_dict.id = rel_level_dict2permission.level_dict_id
+        AND
+            level_dict.level = #{level,jdbcType=INTEGER}
+        AND 
+            level_dict.is_deleted = 0
+        AND
+            rel_level_dict2permission.is_deleted = 0
+
+                
+        INNER JOIN
+            ${subSysDatabase}.permission
+        ON
+            permission.id = rel_level_dict2permission.permission_id
+        AND
+            permission.is_deleted = 0
+        ]]> 
+    </select>
+    
+    
+    
+    <select id="getLevelUriResource" parameterType="java.util.Map" resultType="com.playmatecat.cas.domains.dto.UriResourceDto">
+        <![CDATA[
+        SELECT
+            permission.id as id,
+            permission.code as code
+        FROM
+            ${subSysDatabase}.level_dict
+        INNER JOIN
+            ${subSysDatabase}.rel_level_dict2permission
+        ON
+            level_dict.id = rel_level_dict2permission.level_dict_id
+        AND
+            level_dict.level = #{level,jdbcType=INTEGER}
+        AND 
+            level_dict.is_deleted = 0
+        AND
+            rel_level_dict2permission.is_deleted = 0
+
+                
+        INNER JOIN
+            ${subSysDatabase}.permission
+        ON
+            permission.id = rel_level_dict2permission.permission_id
+        AND
+            permission.is_deleted = 0
+            
+        
+        INNER JOIN
+            ${subSysDatabase}.rel_permission2url_resource
+        ON
+            permission.id = rel_permission2url_resource.permission_id
+        AND
+            rel_permission2url_resource.is_deleted = 0
+            
+        
+        INNER JOIN
+            ${subSysDatabase}.uri_resource
+        ON
+            rel_permission2url_resource.uri_resource_id = uri_resource.id
+        AND
+            uri_resource.is_deleted = 0
+      
+        ]]>
+    </select>
+    
+    
+    <!-- 等级变更比较随时,所以无缓存 -->
+    <select id="getUserLevel" useCache="false" parameterType="java.util.Map" resultType="java.lang.Integer">
+        <![CDATA[
+        SELECT
+            level
+        FROM
+            ${subSysDatabase}.user
+        WHERE
+            user.id = #{userId,jdbcType=INTEGER}
+        AND
+            user.is_deleted = 0
+        ]]>
+    </select>
+    
+    
+    <insert id="addUserLevel" parameterType="java.util.Map">
+        <![CDATA[
+        INSERT INTO 
+            ${subSysDatabase}.user 
+            (id,
+            level)
+        VALUES 
+            (#{userId,jdbcType=INTEGER},
+            #{level,jdbcType=INTEGER}) 
+        ON DUPLICATE KEY UPDATE 
+            level = #{level,jdbcType=INTEGER}
+        ]]>
+    </insert>
+    
 </mapper>

@@ -8,14 +8,14 @@
 		</Console>
 	</Appenders>
 	<Loggers>
-		<Logger name="druid.sql.Statement" level="DEBUG"
+		<!-- <Logger name="druid.sql.Statement" level="DEBUG"
             additivity="false">
             <appender-ref ref="Console" />
         </Logger>
         <Logger name="druid.sql.ResultSet" level="DEBUG"
             additivity="false">
             <appender-ref ref="Console" />
-        </Logger>
+        </Logger> -->
 		
 		<Root level="INFO">
 			<AppenderRef ref="Console" />

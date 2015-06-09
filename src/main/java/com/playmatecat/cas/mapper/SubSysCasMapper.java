@@ -64,10 +64,5 @@ public interface SubSysCasMapper {
 	 */
 	public int addUserLevel(Map<String,Object> params);
 	
-	/**
-	 * 获得等级字典,某个条件的等级的id
-	 * @param params
-	 * @return
-	 */
-	public Long getLevelDictId(Map<String,Object> params);
+
 }

@@ -95,32 +95,24 @@ public class SubSysCasService {
 	 *  若不存在等级信息,则创建用户等级信息,并且将用户所属等级设置为1级(最低),游客(匿名访问者)等级为0
 	 * @return
 	 */
-	public Integer getOrInitUserLevel(Long userId) throws Exception {
+	public Integer getOrInitUserLevel(Long userId) {
 	    
 	    Integer rtnLevel;
 	    
 	    Map<String,Object> params = new HashMap<String,Object>();
-        params.put("userId", userId);
-        
-        String subSysDatabase = UtilsProperties.getProp("cas.subsys.sys.database");
+	    String subSysDatabase = UtilsProperties.getProp("cas.subsys.sys.database");
         params.put("subSysDatabase", subSysDatabase);
+        params.put("userId", userId);
+
 	    Integer level = subSysCasMapper.getUserLevel(params);
 	    
 	    if(level == null) {
 	        //若不存在等级信息,则创建用户等级信息,并且将用户所属等级设置为1级(最低)
-	        //获得系统最低等级的等级id
-	        Map<String,Object> levelDictParams = new HashMap<String,Object>();
-	        levelDictParams.put("subSysDatabase", subSysDatabase);
-	        
-	        levelDictParams.put("level", LevelDictConstants.NOVICE_LEVEL);
-	        Long lowestLevelId = subSysCasMapper.getLevelDictId(levelDictParams);
-	        if(lowestLevelId == null) {
-	            throw new Exception("子系统不存在等级表,或者不存在等级为1的等级");
-	        }
-	        
-	        //将用户设置为最低等级,写入用户等级表
-	        params.put("levelId", lowestLevelId);
-	        subSysCasMapper.addUserLevel(params);
+	        Map<String,Object> newParams = new HashMap<String,Object>();
+	        newParams.put("userId", userId);
+	        newParams.put("subSysDatabase", subSysDatabase);
+	        newParams.put("level", LevelDictConstants.NOVICE_LEVEL);
+	        subSysCasMapper.addUserLevel(newParams);
 	        rtnLevel = LevelDictConstants.NOVICE_LEVEL;
 	    } else {
 	        //返回用户拥有的等级

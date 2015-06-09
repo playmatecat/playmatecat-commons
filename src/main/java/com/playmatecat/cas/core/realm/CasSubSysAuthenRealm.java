@@ -72,12 +72,7 @@ public class CasSubSysAuthenRealm extends AuthorizingRealm {
                 if (UtilsProperties.getProp("cas.subsys.sys.user.level").equals(USER_LEVEL_OPEN)) {
                     // 获得子系统用户等级信息
                     // 若不存在等级信息,则创建用户等级信息,并且将用户所属等级设置为1级(最低)
-                    Integer level = null;
-                    try {
-                        level = subSysCasService.getOrInitUserLevel(userId);
-                    } catch (Exception e) {
-                        logger.error(e);
-                    }
+                    Integer level = subSysCasService.getOrInitUserLevel(userId);
                     
                     // 获得等级所对应的权限,将权限加入到用户的权限中
                     if(level != null) {
