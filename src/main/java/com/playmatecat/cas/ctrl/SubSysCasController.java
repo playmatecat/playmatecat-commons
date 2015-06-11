@@ -12,6 +12,7 @@ import org.springframework.core.io.support.PropertiesLoaderUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import com.playmatecat.commons.constants.PropertiesKeyConstants;
 import com.playmatecat.utils.spring.UtilsProperties;
 import com.playmatecat.utils.spring.UtilsSpringContext;
 
@@ -60,10 +61,10 @@ public class SubSysCasController {
 //		}
 		
 		
-		String casServerUrl = UtilsProperties.getProp("cas.server.url");
+		String casServerUrl = UtilsProperties.getProp(PropertiesKeyConstants.CAS_SERVER_URL);
 		
 		//子系统的http(s)+域名
-		String subSysSiteUrl = UtilsProperties.getProp("cas.subsys.url");
+		String subSysSiteUrl = UtilsProperties.getProp(PropertiesKeyConstants.CAS_SERVER_URL);
 
 		//跳转到cas请求登录验证
 		String casUrl = "redirect:" + casServerUrl + "?url=" + subSysSiteUrl + lastUrl;

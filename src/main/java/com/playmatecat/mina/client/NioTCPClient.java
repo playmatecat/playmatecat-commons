@@ -37,10 +37,9 @@ public class NioTCPClient {
     private static final int BUFF_SZIE = 1024;
     /** sockect停滞时间 **/
     private static final int IDLE_TIME = 10;
-    /** 重试建立连接次数 **/
-    private static final int RETRY_COUNT = 5;
 
     private static NioClientSessionListener nioClientSessionListener = new NioClientSessionListener();
+    
 
     /**
      * 程序入口
@@ -88,10 +87,7 @@ public class NioTCPClient {
                 session = future.getSession();
                 break;
             } catch (Exception e) {
-                logger.error("nio server连接失败!", e);
-                if (tryCount > RETRY_COUNT) {
-                    break;
-                }
+                logger.error("nio server连接失败!" + ADDRESS + ":" + PORT, e);
             }
         }
 

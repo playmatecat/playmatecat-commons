@@ -16,6 +16,7 @@ import org.apache.shiro.subject.PrincipalCollection;
 import com.playmatecat.cas.domains.dto.PermissionDto;
 import com.playmatecat.cas.domains.dto.RoleDto;
 import com.playmatecat.cas.service.SubSysCasService;
+import com.playmatecat.commons.constants.PropertiesKeyConstants;
 import com.playmatecat.utils.spring.UtilsProperties;
 import com.playmatecat.utils.spring.UtilsSpringContext;
 
@@ -69,7 +70,7 @@ public class CasSubSysAuthenRealm extends AuthorizingRealm {
                 }
 
                 // 若子系统拥有等级表,尝试去获得用户所属等级对应的权限
-                if (UtilsProperties.getProp("cas.subsys.sys.user.level").equals(USER_LEVEL_OPEN)) {
+                if (UtilsProperties.getProp(PropertiesKeyConstants.CAS_SUBSYS_USER_LEVEL_TOGGLE).equals(USER_LEVEL_OPEN)) {
                     // 获得子系统用户等级信息
                     // 若不存在等级信息,则创建用户等级信息,并且将用户所属等级设置为1级(最低)
                     Integer level = subSysCasService.getOrInitUserLevel(userId);

@@ -13,6 +13,7 @@ import com.playmatecat.cas.domains.dto.RoleDto;
 import com.playmatecat.cas.domains.dto.UriResourceDto;
 import com.playmatecat.cas.domains.dto.UserLevelDto;
 import com.playmatecat.cas.mapper.SubSysCasMapper;
+import com.playmatecat.commons.constants.PropertiesKeyConstants;
 import com.playmatecat.utils.spring.UtilsProperties;
 
 /**
@@ -39,7 +40,7 @@ public class SubSysCasService {
 	 */
 	public List<RoleDto> getUserRoles(Long userId) {
 		Map<String,Object> params = new HashMap<String,Object>();
-		String subSysDatabase = UtilsProperties.getProp("cas.subsys.sys.database");
+		String subSysDatabase = UtilsProperties.getProp(PropertiesKeyConstants.CAS_SUBSYS_SYS_DATABASE);
         params.put("subSysDatabase", subSysDatabase);
         
         params.put("userId", userId);
@@ -53,7 +54,7 @@ public class SubSysCasService {
 	 */
 	public List<PermissionDto> getUserPermissions(Long userId) {
 		Map<String,Object> params = new HashMap<String,Object>();
-		String subSysDatabase = UtilsProperties.getProp("cas.subsys.sys.database");
+		String subSysDatabase = UtilsProperties.getProp(PropertiesKeyConstants.CAS_SUBSYS_SYS_DATABASE);
         params.put("subSysDatabase", subSysDatabase);
         
         params.put("userId", userId);
@@ -67,7 +68,7 @@ public class SubSysCasService {
      */
 	public List<UriResourceDto> getRoleUriResources(Long userId) {
 		Map<String,Object> params = new HashMap<String,Object>();
-		String subSysDatabase = UtilsProperties.getProp("cas.subsys.sys.database");
+		String subSysDatabase = UtilsProperties.getProp(PropertiesKeyConstants.CAS_SUBSYS_SYS_DATABASE);
         params.put("subSysDatabase", subSysDatabase);
         
 		params.put("userId", userId);
@@ -81,7 +82,7 @@ public class SubSysCasService {
 	 */
 	public List<UriResourceDto> getLevelUriResource(Integer level) {
 	    Map<String,Object> params = new HashMap<String,Object>();
-        String subSysDatabase = UtilsProperties.getProp("cas.subsys.sys.database");
+        String subSysDatabase = UtilsProperties.getProp(PropertiesKeyConstants.CAS_SUBSYS_SYS_DATABASE);
         params.put("subSysDatabase", subSysDatabase);
         
         params.put("level", level);
@@ -100,7 +101,7 @@ public class SubSysCasService {
 	    Integer rtnLevel;
 	    
 	    Map<String,Object> params = new HashMap<String,Object>();
-	    String subSysDatabase = UtilsProperties.getProp("cas.subsys.sys.database");
+	    String subSysDatabase = UtilsProperties.getProp(PropertiesKeyConstants.CAS_SUBSYS_SYS_DATABASE);
         params.put("subSysDatabase", subSysDatabase);
         params.put("userId", userId);
 
@@ -129,7 +130,7 @@ public class SubSysCasService {
 	 */
 	public List<PermissionDto> getLevelPermissions(Integer level) {
 	    Map<String,Object> params = new HashMap<String,Object>();
-        String subSysDatabase = UtilsProperties.getProp("cas.subsys.sys.database");
+        String subSysDatabase = UtilsProperties.getProp(PropertiesKeyConstants.CAS_SUBSYS_SYS_DATABASE);
         params.put("subSysDatabase", subSysDatabase);
         
         params.put("level", level);
