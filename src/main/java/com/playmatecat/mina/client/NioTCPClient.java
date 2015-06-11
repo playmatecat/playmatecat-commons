@@ -2,7 +2,8 @@ package com.playmatecat.mina.client;
 
 import java.net.InetSocketAddress;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.mina.core.future.ConnectFuture;
 import org.apache.mina.core.session.IdleStatus;
 import org.apache.mina.core.session.IoSession;
@@ -10,45 +11,45 @@ import org.apache.mina.filter.codec.ProtocolCodecFilter;
 import org.apache.mina.filter.codec.serialization.ObjectSerializationCodecFactory;
 import org.apache.mina.transport.socket.nio.NioSocketConnector;
 
-/**
- * NIO 客户端
- * 
- * @author root
- *
- */
 public class NioTCPClient {
-
     /** 公用全局的connector **/
-    static NioSocketConnector connector;
+    private static NioSocketConnector connector;
 
-    static IoSession session;
+    private IoSession session;
 
-    static ConnectFuture future;
+    private static ConnectFuture future;
 
-    private static Logger logger = Logger.getLogger(NioTCPClient.class);
+    private static Logger logger = LogManager.getLogger(NioTCPClient.class);
 
-    /** 服务端口 **/
-    private static final int PORT = 8501;
-    /** 服务IP **/
-    private static final String ADDRESS = "127.0.0.1";
     /** 超时 **/
     private static final int TIME_OUT = 60;
     /** 缓冲大小 **/
     private static final int BUFF_SZIE = 1024;
     /** sockect停滞时间 **/
     private static final int IDLE_TIME = 10;
-
-    private static NioClientSessionListener nioClientSessionListener = new NioClientSessionListener();
     
-
+    /**client监听器**/
+    private NioClientSessionListener nioClientSessionListener;
+    
+    /** 服务端口 **/
+    private int port = 8501;
+    /** 服务IP **/
+    private String address = "127.0.0.1";
+    
     /**
-     * 程序入口
-     * 
-     * @param args
-     * @throws Throwable
+     * 创建一个mina nio client
+     * @param address 服务端IP
+     * @param port 端口
      */
-    public static void init() throws Exception {
-        // @STEP1 创建NIO连接器
+    public NioTCPClient(String address,int port){
+        this.address = address;
+        this.port = port;
+        init();
+        this.nioClientSessionListener = new NioClientSessionListener(this);
+    }
+    
+    private void init() {
+     // @STEP1 创建NIO连接器
         connector = new NioSocketConnector();
         // 设定超时值
         connector.setConnectTimeoutMillis(TIME_OUT);
@@ -77,22 +78,26 @@ public class NioTCPClient {
         connector.addListener(nioClientSessionListener);
 
         // @STEP4 尝试建立连接,连接成功则跳出循环
-        int tryCount = 0;
         while (true) {
             try {
-                tryCount++;
-                future = connector.connect(new InetSocketAddress(ADDRESS, PORT));
+                future = connector.connect(new InetSocketAddress(address, port));
                 // 等待连接创建成功
                 future.awaitUninterruptibly();
                 session = future.getSession();
                 break;
             } catch (Exception e) {
-                logger.error("nio server连接失败!" + ADDRESS + ":" + PORT, e);
+                logger.error("nio server连接失败!" + address + ":" + port, e);
+                try {
+                    Thread.sleep(5000);
+                } catch (Exception e2) {
+                    // do nothing
+                }
+                
             }
         }
-
     }
-
+    
+    
     public static ConnectFuture getFuture() {
         return future;
     }
@@ -102,17 +107,28 @@ public class NioTCPClient {
      * 
      * @return
      */
-    public static NioSocketConnector getConnector() {
+    public NioSocketConnector getConnector() {
         return connector;
     }
+    
+   
 
     /**
      * 获取session
      * 
      * @return
      */
-    public static IoSession getSession() {
+    public IoSession getSession() {
         return session;
+    }
+    
+    /**
+     * 设置session
+     * 
+     * @return
+     */
+    public void setSession(IoSession session) {
+        this.session = session;
     }
 
     /**
@@ -125,4 +141,5 @@ public class NioTCPClient {
         // 断开连接
         connector.dispose();
     }
+    
 }

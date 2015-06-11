@@ -16,6 +16,12 @@ public class NioClientSessionListener implements IoServiceListener {
     
     /** 断线重连延迟 **/
     private static final int RECONNECT_DELAY = 1000;
+    
+    private NioTCPClient nioTcpClient;
+    
+    public NioClientSessionListener(NioTCPClient nioTcpClient){
+        this.nioTcpClient = nioTcpClient;
+    }
 
     public void serviceActivated(IoService service) throws Exception {
 
@@ -40,11 +46,11 @@ public class NioClientSessionListener implements IoServiceListener {
     public void sessionDestroyed(IoSession session) throws Exception {
         while (true) {
             Thread.sleep(RECONNECT_DELAY);
-            ConnectFuture future = NioTCPClient.connector.connect();
+            ConnectFuture future = nioTcpClient.getConnector().connect();
             // 等待连接创建成功
             future.awaitUninterruptibly();
             // 获取会话
-            NioTCPClient.session = future.getSession();
+            nioTcpClient.setSession(future.getSession());
         }
     }
 
