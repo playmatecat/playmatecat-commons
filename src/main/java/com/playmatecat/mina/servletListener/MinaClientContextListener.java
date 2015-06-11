@@ -1,5 +1,6 @@
 package com.playmatecat.mina.servletListener;
 
+import java.text.MessageFormat;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -7,10 +8,14 @@ import java.util.List;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import com.playmatecat.commons.constants.PropertiesKeyConstants;
 import com.playmatecat.mina.client.NioTCPClient;
 import com.playmatecat.utils.mina.UtilsNioClient;
 import com.playmatecat.utils.spring.UtilsProperties;
+
 
 /**
  * 初始化client端的mina服务
@@ -19,6 +24,7 @@ import com.playmatecat.utils.spring.UtilsProperties;
  */
 public class MinaClientContextListener implements ServletContextListener{
     
+    private static Logger logger = LogManager.getLogger(MinaClientContextListener.class);
 
     @Override
     public void contextInitialized(ServletContextEvent sce) {
@@ -39,6 +45,7 @@ public class MinaClientContextListener implements ServletContextListener{
             //创建mina实例
             NioTCPClient nioTcpClient = new NioTCPClient(address, port);
             //存入放入到工具类
+            logger.info(MessageFormat.format("成功初始化   mina service client:{0} on {1}:{2}", new Object[]{keyName,address,port.toString()}));
             minaServiceMap.put(keyName, nioTcpClient);
         });
         

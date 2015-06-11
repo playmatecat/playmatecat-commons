@@ -141,5 +141,22 @@ public class NioTCPClient {
         // 断开连接
         connector.dispose();
     }
+
+    /*---------get & set-----------*/
+    public int getPort() {
+        return port;
+    }
+
+    public void setPort(int port) {
+        this.port = port;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
     
 }
