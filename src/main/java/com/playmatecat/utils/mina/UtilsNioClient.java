@@ -10,17 +10,20 @@ import org.apache.logging.log4j.Logger;
 import org.apache.mina.core.session.IoSession;
 
 import com.playmatecat.mina.NioTransferAdapter;
+import com.playmatecat.mina.RequestServiceAdapter;
+import com.playmatecat.mina.ResponseServiceAdapter;
 import com.playmatecat.mina.client.ClientHandler;
 import com.playmatecat.mina.client.NioTCPClient;
+import com.playmatecat.utils.json.UtilsJson;
 import com.playmatecat.utils.label.UtilsGUID;
 
-public class UtilsNioClient {
+public class UtilsNioClient<T> {
     
     private static Logger logger = LogManager.getLogger(UtilsNioClient.class);
     
     /**结果集存放的map,通过GUID作为KEY,所有的client都共享这个map(key为GUID不会重复,请放心)**/
-    public final static ConcurrentHashMap<String, NioTransferAdapter> RESULT_MAP 
-        = new ConcurrentHashMap<String, NioTransferAdapter>();
+    public final static ConcurrentHashMap<String, ResponseServiceAdapter> RESULT_MAP 
+        = new ConcurrentHashMap<String, ResponseServiceAdapter>();
 
     private static ReentrantLock lock = new ReentrantLock();
     
@@ -63,7 +66,8 @@ public class UtilsNioClient {
      * @param serverKey 服务的keyName @MinaClientContextListener
      * @param nta
      */
-    public static void write(String serverKey, NioTransferAdapter nta) {
+    @SuppressWarnings("unchecked")
+    public static <T> T write(String serverKey, RequestServiceAdapter nta, Class<T> clazz) throws Exception{
         IoSession session = nioServiceMap.get(serverKey).getSession();
 
         String guid = UtilsGUID.getGUID();
@@ -73,7 +77,7 @@ public class UtilsNioClient {
 
         // 获得返回数据
         while (true) {
-            NioTransferAdapter rtnNta = RESULT_MAP.get(guid);
+            ResponseServiceAdapter rtnNta = RESULT_MAP.get(guid);
 
             // 检查是否超时(默认5分钟)
             long usedTime = System.currentTimeMillis() - nta.getStartTimeMillis();
@@ -83,17 +87,38 @@ public class UtilsNioClient {
 
             // 获得存储数据
             if (rtnNta != null) {
-                // 释放空间
+                // 释放map空间
                 RESULT_MAP.remove(guid);
-                return;
+                
+                T result = null;
+                
+                //若服务层出现异常,则直接抛出异常
+                if(rtnNta.getException() != null) {
+                    throw rtnNta.getException();
+                }
+                
+                //尝试转换成结果类型数据
+                try {
+                    result = (T) UtilsJson.parseJsonStr2Obj(rtnNta.getResponseJsonData(), clazz);
+                } catch (Exception e) {
+                    String errMsg = MessageFormat.format("服务返回数据格式不匹配.GUID:{0}, 服务返回数据:{1}, 转换类型:{2}",
+                            new Object[]{guid, rtnNta.getResponseJsonData(), clazz.getClass().getName()});
+                    String simpleErrMsg = MessageFormat.format("服务返回数据格式不匹配.GUID:{0}", guid);
+                    logger.error(errMsg);
+                    throw new Exception(simpleErrMsg);
+                }
+                        
+                return result;
             } else {
                 try {
                     Thread.sleep(10);
                 } catch (Exception e) {
                     e.printStackTrace();
+                    return null;
                 }
             }
         }
-
+        
+        throw new Exception("服务请求处理超时");
     }
 }

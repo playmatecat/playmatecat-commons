@@ -7,6 +7,7 @@ import org.apache.mina.core.service.IoHandlerAdapter;
 import org.apache.mina.core.session.IoSession;
 
 import com.playmatecat.mina.NioTransferAdapter;
+import com.playmatecat.mina.ResponseServiceAdapter;
 import com.playmatecat.utils.mina.UtilsNioClient;
 
 /**
@@ -35,14 +36,14 @@ public class ClientHandler extends IoHandlerAdapter {
     @Override
     public void messageReceived(IoSession session, Object message) throws Exception {
 
-        NioTransferAdapter nta = (NioTransferAdapter) message;
+        ResponseServiceAdapter nta = (ResponseServiceAdapter) message;
         // 检查是否超时,防止写入死亡数据(死亡数据永远不会从map里清除)
         long usedTime = System.currentTimeMillis() - nta.getStartTimeMillis();
         if(usedTime < TIMEOUT_MILLIS) {
             logger.debug(MessageFormat.format("[Nio Server]<<service name:{0}", nta.getRestServiceName()));
-            logger.debug(MessageFormat.format("[Nio Server]<<json data:{0}", nta.getJsonData()));
+            logger.debug(MessageFormat.format("[Nio Server]<<json data:{0}", nta.getRequestJsonData()));
             logger.debug(MessageFormat.format("[Nio Server]<<dto class:{0}", nta.getClazz()));
-            logger.debug(MessageFormat.format("[Nio Server]>>result:{0}", nta.getResultJsonData()));
+            logger.debug(MessageFormat.format("[Nio Server]>>result:{0}", nta.getResponseJsonData()));
             logger.debug(MessageFormat.format("[Nio Server]>>cost:{0} ms", usedTime));
             UtilsNioClient.RESULT_MAP.put(nta.getGUID(), nta);
         }
