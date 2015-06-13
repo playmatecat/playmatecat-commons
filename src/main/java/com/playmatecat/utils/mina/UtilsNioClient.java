@@ -9,11 +9,11 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.mina.core.session.IoSession;
 
-import com.playmatecat.mina.NioTransferAdapter;
-import com.playmatecat.mina.RequestServiceAdapter;
-import com.playmatecat.mina.ResponseServiceAdapter;
 import com.playmatecat.mina.client.ClientHandler;
 import com.playmatecat.mina.client.NioTCPClient;
+import com.playmatecat.mina.stucture.NioTransferAdapter;
+import com.playmatecat.mina.stucture.RequestServiceAdapter;
+import com.playmatecat.mina.stucture.ResponseServiceAdapter;
 import com.playmatecat.utils.json.UtilsJson;
 import com.playmatecat.utils.label.UtilsGUID;
 
@@ -74,7 +74,7 @@ public class UtilsNioClient<T> {
         nta.setGUID(guid);
         nta.setStartTimeMillis(System.currentTimeMillis());
         session.write(nta);
-
+        
         // 获得返回数据
         while (true) {
             ResponseServiceAdapter rtnNta = RESULT_MAP.get(guid);

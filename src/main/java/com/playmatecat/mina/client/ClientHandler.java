@@ -6,8 +6,8 @@ import org.apache.log4j.Logger;
 import org.apache.mina.core.service.IoHandlerAdapter;
 import org.apache.mina.core.session.IoSession;
 
-import com.playmatecat.mina.NioTransferAdapter;
-import com.playmatecat.mina.ResponseServiceAdapter;
+import com.playmatecat.mina.stucture.NioTransferAdapter;
+import com.playmatecat.mina.stucture.ResponseServiceAdapter;
 import com.playmatecat.utils.mina.UtilsNioClient;
 
 /**

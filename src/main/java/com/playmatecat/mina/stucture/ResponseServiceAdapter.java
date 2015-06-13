@@ -1,4 +1,4 @@
-package com.playmatecat.mina;
+package com.playmatecat.mina.stucture;
 
 /**
  * NIO服务端返回的数据类型

@@ -1,4 +1,4 @@
-package com.playmatecat.mina;
+package com.playmatecat.mina.stucture;
 
 import java.io.Serializable;
 
