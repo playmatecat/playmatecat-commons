@@ -47,4 +47,7 @@ public class UtilsSpringContext implements ApplicationContextAware {
 		UtilsSpringContext.applicationContext=applicationContext;
 	}
 	
+	public static ClassLoader getClassLoader() {
+	    return applicationContext.getClassLoader();
+	}
 }

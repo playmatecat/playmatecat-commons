@@ -30,7 +30,9 @@ public class NioTransferAdapter implements Serializable {
     /** JSONdata所对应的数据类型 **/
     private Class<? extends Object> clazz;
 
-
+    /** 发生的异常 **/
+    private Exception exception;
+    
     /**
      * 用于服务端回传结果
      * @param resultJsonData 结果
@@ -103,6 +105,14 @@ public class NioTransferAdapter implements Serializable {
 
     public void setResultJsonData(String resultJsonData) {
         this.resultJsonData = resultJsonData;
+    }
+
+    public Exception getException() {
+        return exception;
+    }
+
+    public void setException(Exception exception) {
+        this.exception = exception;
     }
 
 
