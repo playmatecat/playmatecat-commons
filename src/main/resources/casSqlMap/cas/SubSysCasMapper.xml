@@ -106,17 +106,17 @@
     		
     		
     	INNER JOIN
-    		${subSysDatabase}.rel_permission2url_resource
+    		${subSysDatabase}.rel_permission2uri_resource
     	ON
-    		permission.id = rel_permission2url_resource.permission_id
+    		permission.id = rel_permission2uri_resource.permission_id
     	AND
-    		rel_permission2url_resource.is_deleted = 0
+    		rel_permission2uri_resource.is_deleted = 0
     		
     	
     	INNER JOIN
     		${subSysDatabase}.uri_resource
     	ON
-    		rel_permission2url_resource.uri_resource_id = uri_resource.id
+    		rel_permission2uri_resource.uri_resource_id = uri_resource.id
     	AND
     		uri_resource.is_deleted = 0
     	]]>
@@ -180,17 +180,17 @@
             
         
         INNER JOIN
-            ${subSysDatabase}.rel_permission2url_resource
+            ${subSysDatabase}.rel_permission2uri_resource
         ON
-            permission.id = rel_permission2url_resource.permission_id
+            permission.id = rel_permission2uri_resource.permission_id
         AND
-            rel_permission2url_resource.is_deleted = 0
+            rel_permission2uri_resource.is_deleted = 0
             
         
         INNER JOIN
             ${subSysDatabase}.uri_resource
         ON
-            rel_permission2url_resource.uri_resource_id = uri_resource.id
+            rel_permission2uri_resource.uri_resource_id = uri_resource.id
         AND
             uri_resource.is_deleted = 0
       
