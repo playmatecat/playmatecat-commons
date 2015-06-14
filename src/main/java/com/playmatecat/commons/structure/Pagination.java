@@ -15,12 +15,29 @@ public class Pagination<T> {
     
     private List<T> list;
     
+    /** 数据总数 **/
+    private int total;
+    
+    /** 总页数 **/
+    @SuppressWarnings("unused")
+    private int pageCount;
+    
     public Pagination(){}
     
     public Pagination(int pageNo,int PageSize) {
         this.pageNo = pageNo;
         this.pageSize = PageSize;
     }
+    
+    /**
+     * 获得总页数
+     * @return
+     */
+    public int getPageCount() {
+        return ((total + pageSize -1 )/ pageSize);
+    }
+    
+    /*----get & set-----*/
 
     public int getPageSize() {
         return pageSize;
@@ -44,6 +61,14 @@ public class Pagination<T> {
 
     public void setList(List<T> list) {
         this.list = list;
+    }
+
+    public int getTotal() {
+        return total;
+    }
+
+    public void setTotal(int total) {
+        this.total = total;
     }
 
     
