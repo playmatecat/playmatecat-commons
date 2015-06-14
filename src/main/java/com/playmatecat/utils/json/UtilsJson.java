@@ -19,12 +19,23 @@ public class UtilsJson {
         return JSON.toJSONString(obj);
     }
 
+    /**
+     * 将json字符串转为对象
+     * 注意!对象必须有空参数默认构造方法!
+     * @param jsonStr
+     * @param clazz
+     * @return
+     */
     public static Object parseJsonStr2Obj(String jsonStr, Class<? extends Object> clazz) {
-        return JSONValue.parse(jsonStr, clazz);
+        /*
+         * JSONValue.parse(jsonStr, clazz);
+         * smart json 反序列化好像有BUG
+         */
+        return JSON.parseObject(jsonStr, clazz);
     }
 
     public static Map<String, Object> parseObj2Map(Object obj) {
-        return JSONValue.parse(JSON.toJSONString(obj), JSONObject.class);
+        return  JSON.parseObject(JSON.toJSONString(obj));
     }
 
 }

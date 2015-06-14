@@ -76,7 +76,7 @@ public class UtilsNioClient<T> {
         }
         
         int clientSize = clientList.size();
-        int rnd = RandomUtils.nextInt(0, clientSize + 1);
+        int rnd = RandomUtils.nextInt(0, clientSize);
         
         //随机获得一个服务端(均衡负载)
         IoSession session = clientList.get(rnd).getSession();
