@@ -1,6 +1,7 @@
 package com.playmatecat.mina.servletListener;
 
 import java.text.MessageFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -33,7 +34,7 @@ public class MinaClientContextListener implements ServletContextListener{
         String[] serverAddrArray = minaServerAddr.split(",");
         List<String> serverList = Arrays.asList(serverAddrArray);
         
-        HashMap<String, NioTCPClient> minaServiceMap = new HashMap<String, NioTCPClient>();
+        HashMap<String, List<NioTCPClient>> minaServiceMap = new HashMap<String, List<NioTCPClient>>();
         
         //分解读取参数
         serverList.stream().forEach(peekServer -> {
@@ -46,7 +47,15 @@ public class MinaClientContextListener implements ServletContextListener{
             NioTCPClient nioTcpClient = new NioTCPClient(address, port);
             //存入放入到工具类
             logger.info(MessageFormat.format("成功初始化   mina service client:{0} on {1}:{2}", new Object[]{keyName,address,port.toString()}));
-            minaServiceMap.put(keyName, nioTcpClient);
+            
+            @SuppressWarnings("unchecked")
+            List<NioTCPClient> tmpClientList = (List<NioTCPClient>) minaServiceMap.get(keyName);
+            if(tmpClientList == null) {
+                tmpClientList = new ArrayList<NioTCPClient>();
+                minaServiceMap.put(keyName, tmpClientList);
+            } else {
+                tmpClientList.add(nioTcpClient);
+            }
         });
         
         UtilsNioClient.initNioServiceMap(minaServiceMap);
@@ -54,7 +63,9 @@ public class MinaClientContextListener implements ServletContextListener{
 
     @Override
     public void contextDestroyed(ServletContextEvent sce) {
-        UtilsNioClient.readNioServiceMap().forEach(UtilsNioClient::destoryClient);
+        UtilsNioClient.readNioServiceMap().forEach((key,clientList) -> {
+            clientList.stream().forEach(UtilsNioClient::destoryClient);
+        });
     }
 
 }

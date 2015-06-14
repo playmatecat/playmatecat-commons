@@ -19,7 +19,7 @@ public class MinaServiceSupport {
      * @param nta 请求的数据结构体
      * @param rtnClazz 最终返回格式化成的数据类型
      */
-    public Object call(String serverKey, RequestServiceAdapter nta, Class rtnClazz) throws Exception{
+    public static Object call(String serverKey, RequestServiceAdapter nta, Class rtnClazz) throws Exception{
         return UtilsNioClient.write(serverKey, nta, rtnClazz);
     }
 }

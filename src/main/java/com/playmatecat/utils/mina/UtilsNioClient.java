@@ -2,16 +2,17 @@ package com.playmatecat.utils.mina;
 
 import java.text.MessageFormat;
 import java.util.HashMap;
+import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.locks.ReentrantLock;
 
+import org.apache.commons.lang3.RandomUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.mina.core.session.IoSession;
 
 import com.playmatecat.mina.client.ClientHandler;
 import com.playmatecat.mina.client.NioTCPClient;
-import com.playmatecat.mina.stucture.NioTransferAdapter;
 import com.playmatecat.mina.stucture.RequestServiceAdapter;
 import com.playmatecat.mina.stucture.ResponseServiceAdapter;
 import com.playmatecat.utils.json.UtilsJson;
@@ -28,13 +29,13 @@ public class UtilsNioClient<T> {
     private static ReentrantLock lock = new ReentrantLock();
     
     /**mina nio service服务map**/
-    private static HashMap<String, NioTCPClient> nioServiceMap = new HashMap<String, NioTCPClient>();
+    private static HashMap<String, List<NioTCPClient>> nioServiceMap = new HashMap<String, List<NioTCPClient>>();
     
     /**
      * 初始化nio mina nio service服务map
      * @param nioServiceMap
      */
-    public static void initNioServiceMap(HashMap<String, NioTCPClient> map) {
+    public static void initNioServiceMap(HashMap<String, List<NioTCPClient>> map) {
         nioServiceMap = map;
     }
     
@@ -42,7 +43,7 @@ public class UtilsNioClient<T> {
      * 返回server map,自己请不要随意调用这个方法,一般由commons框架调用
      * @return
      */
-    public static HashMap<String, NioTCPClient> readNioServiceMap() {
+    public static HashMap<String, List<NioTCPClient>> readNioServiceMap() {
         return nioServiceMap;
     }
     
@@ -51,9 +52,10 @@ public class UtilsNioClient<T> {
      * java8方法
      * @param client
      */
-    public static void destoryClient(String serverkey, NioTCPClient client) {
+    public static void destoryClient(NioTCPClient client) {
         client.destory();
-        logger.info(MessageFormat.format("[Mina server-{0} is destroy]", serverkey));
+        logger.info(MessageFormat.format("[Mina server-{0}:{1} is destroy]",
+                new Object[]{client.getAddress(),client.getPort()}));
     }
     
     /**
@@ -68,8 +70,17 @@ public class UtilsNioClient<T> {
      */
     @SuppressWarnings("unchecked")
     public static <T> T write(String serverKey, RequestServiceAdapter nta, Class<T> clazz) throws Exception{
-        IoSession session = nioServiceMap.get(serverKey).getSession();
-
+        List<NioTCPClient> clientList = nioServiceMap.get(serverKey);
+        if(clientList == null || clientList.size() == 0) {
+            throw new Exception("服务未连接,或者不存在该服务");
+        }
+        
+        int clientSize = clientList.size();
+        int rnd = RandomUtils.nextInt(0, clientSize + 1);
+        
+        //随机获得一个服务端(均衡负载)
+        IoSession session = clientList.get(rnd).getSession();
+        
         String guid = UtilsGUID.getGUID();
         nta.setGUID(guid);
         nta.setStartTimeMillis(System.currentTimeMillis());

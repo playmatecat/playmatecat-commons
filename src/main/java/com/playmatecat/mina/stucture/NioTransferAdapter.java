@@ -24,7 +24,7 @@ public abstract class NioTransferAdapter implements Serializable {
     /** 向服务端发出请求的数据 **/
     private String requestJsonData;
     
-    /** JSONdata所对应的数据类型 **/
+    /** JSONdata所对应的数据类型(请求和返回必须用同一个类型的VO) **/
     private Class<? extends Object> clazz;
 
     public String getGUID() {
