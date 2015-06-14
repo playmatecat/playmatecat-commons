@@ -4,7 +4,8 @@ import java.io.Serializable;
 
 /**
  * client请求nio server的传递数据适配器
- * 
+ * 由于mina的复杂对象序列化速度并不快,
+ * 所以主体数据采用json进行传递
  * @author blackcat
  *
  */

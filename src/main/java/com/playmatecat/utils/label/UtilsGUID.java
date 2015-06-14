@@ -14,7 +14,7 @@ public class UtilsGUID {
     private UtilsGUID() {
     }
     
-    private static final int GUID_LENGTH = 5;
+    private static final int GUID_LENGTH = 1;
 
     public static String getGUID() {
         String[] guids = new String[GUID_LENGTH];
@@ -24,4 +24,5 @@ public class UtilsGUID {
         String guid = StringUtils.join(guids, "-");
         return guid;
     }
+
 }
