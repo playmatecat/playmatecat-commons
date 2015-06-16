@@ -30,6 +30,7 @@ public class ClientHandler extends IoHandlerAdapter {
 
     @Override
     public void exceptionCaught(IoSession session, Throwable cause) throws Exception {
+        cause.printStackTrace();
         super.exceptionCaught(session, cause);
     }
 
@@ -57,6 +58,7 @@ public class ClientHandler extends IoHandlerAdapter {
 
     @Override
     public void sessionClosed(IoSession session) throws Exception {
+        //TODO 当服务端主动断开连接后,每次client再发起请求时,应该重新建立链接
         logger.info("[Nio Client]session closed.");
         super.sessionClosed(session);
     }
