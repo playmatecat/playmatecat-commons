@@ -24,7 +24,8 @@
 		<!-- 最小连接池数量 -->
 		<property name="minIdle" value="4" />
 		<!-- 连接测试语句 -->
-		<property name="validationQuery" value="SELECT NOW()" />
+		<property name="validationQuery" value="SELECT 1" />
+		<property name="testWhileIdle" value="true" />
 		<!-- 是否缓存preparedStatement，也就是PSCache -->
 		<!-- PSCache对支持游标的数据库性能提升巨大，比如说oracle。Mysql需要5.5或以上 -->
 		<!-- <property name="maxOpenPreparedStatements" value="true" /> -->
