@@ -1,11 +1,13 @@
 package com.playmatecat.utils.json;
 
+import java.util.HashMap;
 import java.util.Map;
 
-import net.minidev.json.JSONObject;
-import net.minidev.json.JSONValue;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
-import com.alibaba.fastjson.JSON;
+
 
 /**
  * json工具类
@@ -13,10 +15,18 @@ import com.alibaba.fastjson.JSON;
  *
  */
 public class UtilsJson {
+    
+    private static ObjectMapper objectMapper = new ObjectMapper();
 
-    public static String parseObj2JsonStr(Object obj) {
+    static {
+        objectMapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
+    }
+    
+    public static String parseObj2JsonStr(Object obj) throws Exception {
         // alibaba json,it well ignore null filed,but json-smart must show null
-        return JSON.toJSONString(obj);
+        
+        //return JSON.toJSONString(obj);
+        return objectMapper.writeValueAsString(obj);
     }
 
     /**
@@ -26,16 +36,19 @@ public class UtilsJson {
      * @param clazz
      * @return
      */
-    public static Object parseJsonStr2Obj(String jsonStr, Class<? extends Object> clazz) {
+    public static Object parseJsonStr2Obj(String jsonStr, Class<? extends Object> clazz) throws Exception {
         /*
          * JSONValue.parse(jsonStr, clazz);
          * smart json 反序列化好像有BUG
          */
-        return JSON.parseObject(jsonStr, clazz);
+        
+        //return JSON.parseObject(jsonStr, clazz);
+        return objectMapper.readValue(jsonStr, clazz);
     }
 
-    public static Map<String, Object> parseObj2Map(Object obj) {
-        return  JSON.parseObject(JSON.toJSONString(obj));
+    public static Map<String, Object> parseObj2Map(Object obj) throws Exception {
+//        //return  JSON.parseObject(JSON.toJSONString(obj));
+        return objectMapper.readValue(parseObj2JsonStr(obj), new TypeReference<HashMap<String,Object>>() {});
     }
-
+    
 }
