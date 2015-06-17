@@ -3,6 +3,7 @@ package com.playmatecat.mina.client;
 import java.text.MessageFormat;
 
 import org.apache.log4j.Logger;
+import org.apache.mina.core.future.ConnectFuture;
 import org.apache.mina.core.service.IoHandlerAdapter;
 import org.apache.mina.core.session.IoSession;
 
@@ -21,6 +22,16 @@ public class ClientHandler extends IoHandlerAdapter {
     
     /** 超时时间5分钟  **/
     public final static long TIMEOUT_MILLIS = 300000;
+    
+    /** 绑定本handler的Nio客户端**/
+    private NioTCPClient nioTCPClient;
+    
+    /** session是否关闭 (线程安全)**/
+    private volatile boolean isSessionClosed = false;
+    
+    public ClientHandler(NioTCPClient nioTCPClient) {
+        this.nioTCPClient = nioTCPClient;
+    }
 
     @Override
     public void sessionOpened(IoSession session) throws Exception {
@@ -52,15 +63,31 @@ public class ClientHandler extends IoHandlerAdapter {
 
     @Override
     public void messageSent(IoSession session, Object message) throws Exception {
+        //如果发送时发现连接被关闭了,那么重建连接
+        if(isSessionClosed) {
+            try {
+                ConnectFuture future = nioTCPClient.getConnector().connect();
+                // 等待连接创建成功
+                future.awaitUninterruptibly();
+                // 获取会话
+                nioTCPClient.setSession(future.getSession());
+            } catch (Exception e) {
+                logger.error("发送时重建nio server连接失败!" + nioTCPClient.getAddress() + ":" + nioTCPClient.getPort(), e);
+                return;
+            }
+            //重建成功则重置状态位
+            isSessionClosed = false;
+        }
+        
         NioTransferAdapter nta = (NioTransferAdapter) message;
         super.messageSent(session, message);
     }
 
     @Override
     public void sessionClosed(IoSession session) throws Exception {
-        //TODO 当服务端主动断开连接后,每次client再发起请求时,应该重新建立链接
         logger.info("[Nio Client]session closed.");
         super.sessionClosed(session);
+        isSessionClosed = true;
     }
 
 }

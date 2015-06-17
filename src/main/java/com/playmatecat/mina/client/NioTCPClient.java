@@ -65,7 +65,7 @@ public class NioTCPClient {
         connector.getFilterChain().addLast("codec", new ProtocolCodecFilter(new ObjectSerializationCodecFactory()));
 
         // @STEP3 指定消息处理器
-        connector.setHandler(new ClientHandler());
+        connector.setHandler(new ClientHandler(this));
 
         // 读取缓冲区
         connector.getSessionConfig().setReadBufferSize(BUFF_SZIE);
