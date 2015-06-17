@@ -85,7 +85,7 @@ public class ClientHandler extends IoHandlerAdapter {
 
     @Override
     public void sessionClosed(IoSession session) throws Exception {
-        logger.info("[Nio Client]session closed.");
+        logger.info("[Nio Client]与服务端连接session closed.");
         super.sessionClosed(session);
         isSessionClosed = true;
     }
