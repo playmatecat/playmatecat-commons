@@ -81,7 +81,6 @@ public class ClientHandler extends IoHandlerAdapter {
             }
         }
         
-        NioTransferAdapter nta = (NioTransferAdapter) message;
         super.messageSent(session, message);
     }
 
