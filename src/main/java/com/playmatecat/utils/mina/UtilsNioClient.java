@@ -53,6 +53,7 @@ public class UtilsNioClient<T> {
      * @param client
      */
     public static void destoryClient(NioTCPClient client) {
+        client.setDestorying(true);
         client.getSession().close(true);
         client.destory();
         logger.info(MessageFormat.format("[Mina server-{0}:{1} is destroy]",

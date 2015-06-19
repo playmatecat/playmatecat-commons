@@ -36,6 +36,9 @@ public class NioTCPClient {
     /** 服务IP **/
     private String address = "127.0.0.1";
     
+    /**是否正在被销毁,当服务器关闭的时候,需要通过这个告知ClientHandler不要再重建连接了**/
+    private boolean isDestorying = false;
+    
     /**
      * 创建一个mina nio client
      * @param address 服务端IP
@@ -157,6 +160,14 @@ public class NioTCPClient {
 
     public void setAddress(String address) {
         this.address = address;
+    }
+
+    public boolean isDestorying() {
+        return isDestorying;
+    }
+
+    public void setDestorying(boolean isDestorying) {
+        this.isDestorying = isDestorying;
     }
     
 }

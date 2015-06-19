@@ -65,18 +65,20 @@ public class ClientHandler extends IoHandlerAdapter {
     public void messageSent(IoSession session, Object message) throws Exception {
         //如果发送时发现连接被关闭了,那么重建连接
         if(isSessionClosed) {
-            try {
-                ConnectFuture future = nioTCPClient.getConnector().connect();
-                // 等待连接创建成功
-                future.awaitUninterruptibly();
-                // 获取会话
-                nioTCPClient.setSession(future.getSession());
-            } catch (Exception e) {
-                logger.error("发送时重建nio server连接失败!" + nioTCPClient.getAddress() + ":" + nioTCPClient.getPort(), e);
-                return;
+            if(nioTCPClient.isDestorying() == false) {
+                try {
+                    ConnectFuture future = nioTCPClient.getConnector().connect();
+                    // 等待连接创建成功
+                    future.awaitUninterruptibly();
+                    // 获取会话
+                    nioTCPClient.setSession(future.getSession());
+                } catch (Exception e) {
+                    logger.error("发送时重建nio server连接失败!" + nioTCPClient.getAddress() + ":" + nioTCPClient.getPort(), e);
+                    return;
+                }
+                //重建成功则重置状态位
+                isSessionClosed = false;
             }
-            //重建成功则重置状态位
-            isSessionClosed = false;
         }
         
         NioTransferAdapter nta = (NioTransferAdapter) message;
