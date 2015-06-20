@@ -9,9 +9,17 @@ import java.util.List;
  */
 public class Pagination<T> {
     
-    private int pageSize;
+    private final static int DEFAULT_PAGESIZE = 10;
+    
+    private final static int DEFAULT_PAGENO = 1;
+    
+    private final static int MAX_PAGESIZE = 50;
+    
+    private final static int MIN_PAGENO = 1;
+    
+    private int pageSize = DEFAULT_PAGESIZE;
 
-    private int pageNo;
+    private int pageNo = DEFAULT_PAGENO;
     
     private List<T> list;
     
@@ -37,13 +45,12 @@ public class Pagination<T> {
         return ((total + pageSize -1 )/ pageSize);
     }
     
-    /*----get & set-----*/
-
     public int getPageSize() {
         return pageSize;
     }
 
     public void setPageSize(int pageSize) {
+        pageSize = pageSize <= MAX_PAGESIZE ? pageSize : MAX_PAGESIZE;
         this.pageSize = pageSize;
     }
 
@@ -52,8 +59,12 @@ public class Pagination<T> {
     }
 
     public void setPageNo(int pageNo) {
+        pageNo = pageNo >= MIN_PAGENO ? pageNo : MIN_PAGENO;
         this.pageNo = pageNo;
     }
+    
+    /*----general get & set-----*/
+
 
     public List<T> getList() {
         return list;
