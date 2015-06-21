@@ -11,10 +11,8 @@
 		<!-- <shiro.version>[1.2.3,1.9)</shiro.version>
 		<spring.version>[4.1.6,4.9)</spring.version>
 		<json-smart.version>[2.1.1,2.9)</json-smart.version>
-		<jackson.version>[1.9,2.9)</jackson.version>
 		<jackson.core.version>[2.5,2.9)</jackson.core.version>
 		<mina.version>[2.0.9,2.9)</mina.version>
-		<fastjson.version>[1.2.5,1.9)</fastjson.version>
 		<slf4j.version>[1.7.12,1.9)</slf4j.version>
 		<commons-lang3.version>[3.4,4.0)</commons-lang3.version>
 		<log4j2.version>[2.3,2.9)</log4j2.version>
@@ -27,7 +25,8 @@
 		<mybatis.vesrion>[3.3.0,3.9)</mybatis.vesrion>
 		<mybatis-spring.version>[1.2.2,1.9)</mybatis-spring.version>
 		<mysql-connector-java.version>[5.1.35,5.9)</mysql-connector-java.version>
-		<commons-pool2.version>[2.4.1,2.9)</commons-pool2.version>-->
+		<commons-pool2.version>[2.4.1,2.9)</commons-pool2.version>
+        <commons-dbcp2.version>[2.9</commons-dbcp2.version>-->
 		
 		
 		
@@ -35,9 +34,7 @@
 		<spring.version>4.1.6.RELEASE</spring.version>
 		<json-smart.version>2.1.1</json-smart.version>
 		<jackson.core.version>2.6.0-rc2</jackson.core.version>
-		<jackson.version>1.9.13</jackson.version>
 		<mina.version>2.0.9</mina.version>
-		<fastjson.version>1.2.6</fastjson.version>
 		<slf4j.version>1.7.12</slf4j.version>
 		<commons-lang3.version>3.4</commons-lang3.version>
 		<log4j2.version>2.3</log4j2.version>
@@ -141,17 +138,6 @@
             <artifactId>jackson-annotations</artifactId>
             <version>${jackson.core.version}</version>
         </dependency>
-<!--         <dependency> -->
-<!--             <groupId>org.codehaus.jackson</groupId> -->
-<!--             <artifactId>jackson-mapper-asl</artifactId> -->
-<!--             <version>${jackson.version}</version> -->
-<!--         </dependency> -->
-		<!-- fastjson -->
-		<dependency>
-			<groupId>com.alibaba</groupId>
-			<artifactId>fastjson</artifactId>
-			<version>${fastjson.version}</version>
-		</dependency>
 		
 		<!-- mina -->
 		<dependency>

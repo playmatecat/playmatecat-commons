@@ -63,6 +63,5 @@ public interface SubSysCasMapper {
 	 * @return
 	 */
 	public int addUserLevel(Map<String,Object> params);
-	
 
 }
