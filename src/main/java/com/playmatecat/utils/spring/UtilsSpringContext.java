@@ -21,7 +21,7 @@ public class UtilsSpringContext implements ApplicationContextAware {
 	private static ApplicationContext applicationContext;
 	
 	public static Object getBean(String beanName){
-		applicationContext.getBeanDefinitionNames();
+//		applicationContext.getBeanDefinitionNames();
 		Object obj = null;
 		try {
 			obj = applicationContext.getBean(beanName);
